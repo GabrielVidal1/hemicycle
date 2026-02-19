@@ -17,15 +17,15 @@ export function mapSeatData<T extends object>({
     ]),
   );
 
-  return layout.map((seat) => {
-    const seatData =
-      dataMap.get(`${seat.seatIndex}-${seat.rowIndex}`) ??
-      dataMap.get(`${seat.idx}`) ??
-      null;
+  return layout.map((seatLayout) => {
+    const seatData: Partial<HemicycleData<T>> =
+      dataMap.get(`${seatLayout.seatIndex}-${seatLayout.rowIndex}`) ??
+      dataMap.get(`${seatLayout.idx}`) ??
+      {};
 
     return {
-      ...seat,
-      data: seatData,
+      ...seatLayout,
+      ...seatData,
     };
   });
 }

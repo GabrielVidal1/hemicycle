@@ -33,7 +33,7 @@ export const DEFAULT_HEMICYCLE_BASE_PROPS: Required<
 };
 
 export const DEFAULT_HEMICYCLE_WITH_AISLES_PROPS: Required<
-  Pick<HemicycleWithAislesProps, "aisleNumber" | "aisleWidth">
+  Pick<HemicycleWithAislesProps<object>, "aisleNumber" | "aisleWidth">
 > = {
   aisleNumber: 4,
   aisleWidth: 4,

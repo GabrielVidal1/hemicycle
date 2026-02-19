@@ -8,7 +8,7 @@ import { HemicycleProps } from "./HemicycleProps";
 import { computeViewBox } from "./services/viewbox";
 import { HemicycleData } from "./types";
 
-export type HemicycleWithAislesProps = HemicycleProps & {
+export type HemicycleWithAislesProps<T extends object> = HemicycleProps<T> & {
   /**
    * Number of aisles dividing the hemicycle into sections (min: 1, default: 4).
    * With N aisles, there will be N+1 sections.
@@ -70,8 +70,8 @@ function partitionDataBySections(
   return sections;
 }
 
-export const HemicycleWithAisles: React.FC<HemicycleWithAislesProps> = (
-  props,
+export const HemicycleWithAisles = <T extends object>(
+  props: HemicycleWithAislesProps<T>,
 ) => {
   const {
     width,

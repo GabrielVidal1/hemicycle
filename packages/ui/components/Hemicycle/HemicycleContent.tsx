@@ -77,7 +77,7 @@ export const HemicycleContent = <T extends object>(
   return (
     <>
       {seatsData.map((seatData) => (
-        <SeatRenderer key={seatData.idx} {...seatData} {...seatConfig} />
+        <SeatRenderer key={seatData.idx} {...seatConfig} {...seatData} />
       ))}
     </>
   );

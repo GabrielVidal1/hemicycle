@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@repo/ui": "*",
+    "@tailwindcss/vite": "^4.2.0",
     "antd": "^6.3.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^4.2.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",

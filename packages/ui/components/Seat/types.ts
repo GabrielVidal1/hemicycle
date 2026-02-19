@@ -1,12 +1,23 @@
 import { SVGProps } from "react";
-import { HemicycleData } from "../Hemicycle/types";
+import { HemicycleData } from "../Hemicycle";
 import { SeatPathParams } from "./shapes/type";
+
+/** Core layout properties for a seat, including its position and associated data. */
+export type SeatLayout = SeatPathParams & {
+  idx: number;
+  rowIndex: number;
+  seatIndex: number;
+};
 
 export type SeatShape = "arc" | "rect" | "circle";
 
+/** Configuration for rendering a seat, excluding layout and data properties. */
 export type SeatConfig<T extends object = object> = {
   /** The shape of the seat (default: "arc"). */
   shape?: SeatShape;
+
+  /** Optional roundedness for arc and rectangular seats (default: 0, ignored for circular seats). */
+  borderRadius?: number;
 
   /** Linear spacing between seats along the arc (default: 1). */
   seatMargin?: number;
@@ -14,7 +25,7 @@ export type SeatConfig<T extends object = object> = {
   /** Optional wrapper function to customize seat rendering. */
   wrapper?: (
     content: React.ReactNode,
-    seatData: HemicycleData<T> | null,
+    seatData: SeatData<T> | null,
   ) => React.ReactNode;
 
   /** Optional fill color for the seat */
@@ -24,12 +35,5 @@ export type SeatConfig<T extends object = object> = {
   props?: SVGProps<SVGPathElement>;
 };
 
-export type SeatLayout = SeatPathParams & {
-  idx: number;
-  rowIndex: number;
-  seatIndex: number;
-};
-
-export type SeatData<T extends object> = SeatLayout & {
-  data: HemicycleData<T> | null;
-};
+/** Combined type for a seat, including both layout, style and associated data. */
+export type SeatData<T extends object> = SeatLayout & Partial<HemicycleData<T>>;

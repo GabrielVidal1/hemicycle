@@ -1,6 +1,10 @@
-export type HemicycleDataBase<T extends object> = {
+import { SeatConfig } from "../Seat/types";
+
+export type BaseHemicycleData = {
   id: string | number;
-} & T;
+} & Pick<SeatConfig, "shape" | "color" | "props">;
+
+export type HemicycleDataBase<T extends object> = BaseHemicycleData & T;
 
 type HemicycleDataWithCoordinates<T extends object> = HemicycleDataBase<T> & {
   x: number;
