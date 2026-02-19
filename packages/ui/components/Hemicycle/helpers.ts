@@ -29,8 +29,6 @@ export function distributeSeats(
   rows: number,
   innerRadius: number,
   radialStep: number,
-  totalAngleRad: number,
-  seatMarginLinear: number,
   effectiveRowMargin: number,
 ): number[] {
   const midRadii = Array.from({ length: rows }, (_, i) => {

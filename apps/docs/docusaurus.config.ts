@@ -15,10 +15,10 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: "https://your-docusaurus-site.example.com",
+  url: "https://assemblee-nationale.vercel.app",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: "/",
+  baseUrl: "/docs",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -61,9 +61,9 @@ const config: Config = {
     },
 
     navbar: {
-      title: "My Site",
+      title: "Assemblée Nationale",
       logo: {
-        alt: "My Site Logo",
+        alt: "Assemblée Nationale Logo",
         src: "img/logo.svg",
       },
       items: [
@@ -82,17 +82,7 @@ const config: Config = {
     },
     footer: {
       style: "dark",
-      links: [
-        {
-          title: "Docs",
-          items: [
-            {
-              label: "Playground",
-              to: "/docs/playground",
-            },
-          ],
-        },
-      ],
+      links: [],
       copyright: `Made with ❤️ by Gabriel Vidal. Built with Docusaurus.`,
     },
     prism: {

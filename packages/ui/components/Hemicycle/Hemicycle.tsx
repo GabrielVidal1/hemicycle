@@ -63,8 +63,6 @@ export const Hemicycle: React.FC<HemicycleProps> = ({
         rows,
         innerRadius,
         radialStep,
-        totalAngleRad,
-        seatMarginLinear,
         effectiveRowMargin,
       );
     }

@@ -56,8 +56,6 @@ export const HemicyclePlayground: React.FC = () => {
         rows,
         innerRadius,
         radialStep,
-        totalAngleRad,
-        seatMarginLinear,
         effectiveRowMargin,
       );
     }
