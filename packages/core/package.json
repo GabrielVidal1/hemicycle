@@ -1,0 +1,26 @@
+{
+  "name": "@hemicycle/core",
+  "version": "0.0.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint \"**/*.ts\""
+  },
+  "dependencies": {
+    "@ladle/react": "^5.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@hemicycle/helpers": "*",
+    "@hemicycle/rendering": "*"
+  },
+  "devDependencies": {
+    "@hemicycle/eslint-config": "*",
+    "@hemicycle/typescript-config": "*",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
+    "eslint": "^8.57.0",
+    "typescript": "5.5.4"
+  }
+}

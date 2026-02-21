@@ -1,0 +1,13 @@
+{
+  "exclude": [
+    "node_modules"
+  ],
+  "references": [
+    {
+      "path": "packages/helpers"
+    },
+    {
+      "path": "packages/rendering"
+    },
+  ]
+}

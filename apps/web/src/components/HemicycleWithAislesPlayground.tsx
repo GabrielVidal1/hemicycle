@@ -1,4 +1,9 @@
-import { Hemicycle, HemicycleData, randomColor, SeatShape } from "@repo/ui";
+import {
+  Hemicycle,
+  HemicycleData,
+  randomColor,
+  SeatShape,
+} from "@hemicycle/core";
 import { InputNumber, Slider, Tooltip } from "antd";
 import React, { useMemo, useState } from "react";
 

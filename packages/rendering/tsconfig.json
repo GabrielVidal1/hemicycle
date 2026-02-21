@@ -1,0 +1,18 @@
+{
+  "extends": "@hemicycle/typescript-config/module.json",
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "compilerOptions": {
+    "baseUrl": "src",
+    "rootDir": "src",
+    "paths": {
+      "@rendering/*": [
+        "./*"
+      ]
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { Hemicycle } from "@repo/ui";
+import { Hemicycle } from "@hemicycle/core";
 import React from "react";
 
 // Add react-live imports you need here

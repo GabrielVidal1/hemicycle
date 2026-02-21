@@ -1,0 +1,20 @@
+{
+  "name": "@hemicycle/rendering",
+  "version": "0.0.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint \"**/*.ts\""
+  },
+  "dependencies": {
+    "@hemicycle/helpers": "*"
+  },
+  "devDependencies": {
+    "@hemicycle/eslint-config": "*",
+    "@hemicycle/typescript-config": "*",
+    "eslint": "^8.57.0",
+    "typescript": "5.5.4"
+  }
+}
