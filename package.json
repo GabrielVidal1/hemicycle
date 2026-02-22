@@ -4,7 +4,8 @@
   "scripts": {
     "dev:packages": "turbo run dev --filter=!docs",
     "dev:docs": "turbo run dev --filter=docs",
-    "build": "turbo run build",
+    "build": "turbo run build --filter=!docs",
+    "build-demo": "turbo run build --filter=web",
     "build-packages": "turbo run build --filter=\"./packages/*\"",
     "test": "vitest",
     "test:watch": "vitest --watch",
@@ -33,5 +34,11 @@
     "packages/*",
     "configs/*",
     "data/*"
-  ]
+  ],
+  "resolutions": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "@types/react": "18.3.28",
+    "@types/react-dom": "18.3.7"
+  }
 }

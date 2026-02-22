@@ -6,6 +6,7 @@ up.docs:
 
 build:
 	yarn build-packages
+	yarn build-demo
 
 install:
 	yarn
