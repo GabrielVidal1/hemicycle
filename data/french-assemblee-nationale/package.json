@@ -14,8 +14,7 @@
   "scripts": {
     "transform-data": "tsx transform.ts",
     "dev": "NODE_ENV=development tsdown --watch",
-    "build": "tsdown",
-    "lint": "eslint \"**/*.ts\""
+    "build": "tsdown"
   },
   "devDependencies": {
     "tsx": "^4.21.0",

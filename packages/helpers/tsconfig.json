@@ -2,6 +2,7 @@
   "extends": "@hemicycle/typescript-config/module.json",
   "include": [
     "src",
+    ".eslintrc.cjs"
   ],
   "exclude": [
     "node_modules"

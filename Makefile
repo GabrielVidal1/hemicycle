@@ -12,3 +12,6 @@ install:
 
 test:
 	yarn test
+
+lint:
+	yarn lint

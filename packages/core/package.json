@@ -18,7 +18,7 @@
   "scripts": {
     "dev": "NODE_ENV=development tsdown --watch",
     "build": "tsdown",
-    "lint": "eslint \"**/*.ts\""
+    "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
     "@hemicycle/helpers": "*"
