@@ -9,9 +9,13 @@
     "test:watch": "vitest --watch",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "changeset publish"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.2",
     "eslint": "^8.57.0",
     "jsdom": "^28.1.0",
     "prettier": "^3.2.5",
