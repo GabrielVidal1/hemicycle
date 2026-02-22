@@ -1,8 +1,11 @@
 up:
-	yarn dev
+	yarn dev:packages
 
 build:
-	yarn build
+	yarn build-packages
 
 install:
 	yarn
+
+test:
+	yarn test

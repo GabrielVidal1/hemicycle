@@ -6,8 +6,9 @@
         "^build"
       ],
       "inputs": [
-        "$TURBO_DEFAULT$",
-        ".env*"
+        "src/**",
+        "package.json",
+        "tsconfig.json"
       ],
       "outputs": [
         "dist/**",
@@ -17,7 +18,7 @@
     "lint": {},
     "dev": {
       "cache": false,
-      "persistent": true,
+      "persistent": true
     }
   }
 }

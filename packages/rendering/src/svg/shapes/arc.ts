@@ -1,12 +1,12 @@
 import { polar } from "@hemicycle/helpers";
-import { SeatPathGenerator } from "./type";
+import { SvgPathGenerator } from "./type";
 
-export const sectorPath: SeatPathGenerator = ({
+export const sectorPath: SvgPathGenerator = ({
   innerR,
   outerR,
   angle1Rad,
   angle2Rad,
-  borderRadius: cornerRadius = 6,
+  borderRadius: cornerRadius = 1,
 }): string => {
   const a1 = angle1Rad;
   const a2 = angle2Rad;

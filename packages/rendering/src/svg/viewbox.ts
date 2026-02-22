@@ -1,16 +1,17 @@
-import { polar } from "@hemicycle/helpers";
+import { polar, toRadians } from "@hemicycle/helpers";
 
 interface ComputeViewBoxParams {
   outerRadius: number;
-  totalAngleRad: number;
+  totalAngle: number;
   pad?: number;
 }
 
 export function computeViewBox({
   outerRadius,
-  totalAngleRad,
+  totalAngle,
   pad = 4,
 }: ComputeViewBoxParams): string {
+  const totalAngleRad = toRadians(totalAngle);
   const arcStartAngle = Math.PI + (Math.PI - totalAngleRad) / 2;
   const arcEndAngle = arcStartAngle + totalAngleRad;
 

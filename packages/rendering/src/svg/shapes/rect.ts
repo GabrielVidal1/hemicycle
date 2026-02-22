@@ -1,6 +1,6 @@
-import { SeatPathGenerator } from "./type";
+import { SvgPathGenerator } from "./type";
 
-export const rectangularSeatPath: SeatPathGenerator = ({
+export const rectangularSeatPath: SvgPathGenerator = ({
   innerR,
   outerR,
   angle1Rad,

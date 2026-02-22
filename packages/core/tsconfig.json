@@ -1,5 +1,5 @@
 {
-  "extends": "@hemicycle/typescript-config/react-library.json",
+  "extends": "@hemicycle/typescript-config/module.json",
   "include": [
     "src",
   ],
@@ -7,16 +7,17 @@
     "node_modules"
   ],
   "compilerOptions": {
-    "baseUrl": ".",
+    "rootDir": ".",
+    "baseUrl": "src/",
     "paths": {
       "@core/*": [
-        "src/*"
+        "./*"
       ]
     }
   },
   "references": [
     {
-      "path": "../rendering"
+      "path": "../helpers"
     }
   ]
 }

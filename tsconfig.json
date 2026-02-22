@@ -9,5 +9,11 @@
     {
       "path": "packages/rendering"
     },
+    {
+      "path": "packages/core"
+    },
+    {
+      "path": "packages/vanilla"
+    },
   ]
 }

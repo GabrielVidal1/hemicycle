@@ -1,13 +1,15 @@
 import { sectorPath } from "./arc";
 import { circularSeatPath } from "./circle";
 import { rectangularSeatPath } from "./rect";
-import { SeatPathGenerator } from "./type";
+import { SvgPathGenerator } from "./type";
 
-export const seatPathGenerators: Record<
+export const svgPathGenerators: Record<
   "arc" | "circle" | "rect",
-  SeatPathGenerator
+  SvgPathGenerator
 > = {
   arc: sectorPath,
   circle: circularSeatPath,
   rect: rectangularSeatPath,
 };
+
+export * from "./type";
