@@ -24,7 +24,7 @@
   "name": "with-vite-react",
   "packageManager": "yarn@1.22.22",
   "workspaces": [
-    "apps/*",
+    "apps/web",
     "packages/*",
     "configs/*",
     "data/*"
