@@ -12,9 +12,9 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
-    "@hemicycle/helpers": "*"
+    "@hemicycle/helpers": "workspace:*"
   },
   "devDependencies": {
-    "@hemicycle/typescript-config": "*"
+    "@hemicycle/typescript-config": "workspace:*"
   }
 }

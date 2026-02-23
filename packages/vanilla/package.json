@@ -21,11 +21,11 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
-    "@hemicycle/core": "*",
-    "@hemicycle/rendering": "*",
-    "@hemicycle/helpers": "*"
+    "@hemicycle/core": "0.1.0",
+    "@hemicycle/rendering": "workspace:*",
+    "@hemicycle/helpers": "workspace:*"
   },
   "devDependencies": {
-    "@hemicycle/typescript-config": "*"
+    "@hemicycle/typescript-config": "workspace:*"
   }
 }

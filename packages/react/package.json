@@ -21,13 +21,13 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
-    "@hemicycle/vanilla": "*",
-    "@hemicycle/core": "*",
-    "@hemicycle/rendering": "*",
-    "@hemicycle/helpers": "*"
+    "@hemicycle/vanilla": "0.1.0",
+    "@hemicycle/core": "0.1.0",
+    "@hemicycle/rendering": "workspace:*",
+    "@hemicycle/helpers": "workspace:*"
   },
   "devDependencies": {
-    "@hemicycle/typescript-config": "*",
+    "@hemicycle/typescript-config": "workspace:*",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0"
   },

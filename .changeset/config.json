@@ -7,7 +7,9 @@
   "access": "public",
   "baseBranch": "main",
   "packages": [
-    "packages/*"
+    "packages/core",
+    "packages/vanilla",
+    "packages/react"
   ],
   "updateInternalDependencies": "patch"
 }

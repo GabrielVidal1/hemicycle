@@ -12,6 +12,6 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "devDependencies": {
-    "@hemicycle/typescript-config": "*"
+    "@hemicycle/typescript-config": "workspace:*"
   }
 }
