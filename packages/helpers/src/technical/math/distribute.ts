@@ -1,4 +1,4 @@
-import { times } from "@hemicycle/helpers";
+import { times } from "../arrayUtils";
 
 /**
  * Distributes a total number of items into a specified number of groups as evenly as possible.

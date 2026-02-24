@@ -1,8 +1,5 @@
 {
-  "extends": [
-    "@hemicycle/typescript-config/module.json",
-    "@hemicycle/typescript-config/react-library.json"
-  ],
+  "extends": "@hemicycle/typescript-config/module.json",
   "include": [
     "src"
   ],
@@ -13,12 +10,19 @@
   "compilerOptions": {
     "outDir": "dist",
     "baseUrl": "src",
+    "jsx": "react-jsx",
     "paths": {
-      "@vanilla/*": [
-        "src/*"
+      "@hemicycle/helpers": [
+        "../../helpers/src/index.ts"
       ],
-      "@core/*": [
-        "../core/src/*"
+      "@hemicycle/rendering": [
+        "../../rendering/src/index.ts"
+      ],
+      "@hemicycle/vanilla": [
+        "../../vanilla/src/index.ts"
+      ],
+      "@hemicycle/core": [
+        "../../core/src/index.ts"
       ],
     }
   },
@@ -31,6 +35,9 @@
     },
     {
       "path": "../rendering"
+    },
+    {
+      "path": "../vanilla"
     },
   ]
 }

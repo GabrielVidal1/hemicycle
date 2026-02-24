@@ -11,12 +11,15 @@
     "outDir": "dist",
     "baseUrl": "src",
     "paths": {
-      "@vanilla/*": [
-        "src/*"
+      "@hemicycle/helpers": [
+        "../../helpers/src/index.ts"
       ],
-      "@core/*": [
-        "../core/src/*"
+      "@hemicycle/rendering": [
+        "../../rendering/src/index.ts"
       ],
+      "@hemicycle/core": [
+        "../../core/src/index.ts"
+      ]
     }
   },
   "references": [
@@ -28,6 +31,6 @@
     },
     {
       "path": "../rendering"
-    },
+    }
   ]
 }

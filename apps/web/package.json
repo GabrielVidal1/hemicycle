@@ -11,7 +11,7 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
-    "@hemicycle/react": "0.1.0",
+    "@hemicycle/react": "0.1.3",
     "@tailwindcss/vite": "^4.2.0",
     "antd": "^6.3.0",
     "react": "^18.2.0",
@@ -19,8 +19,6 @@
     "tailwindcss": "^4.2.0"
   },
   "devDependencies": {
-    "@hemicycle/eslint-config": "workspace:*",
-    "@hemicycle/typescript-config": "workspace:*",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^3.1.0",

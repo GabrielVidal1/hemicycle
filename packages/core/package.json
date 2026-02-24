@@ -1,6 +1,6 @@
 {
   "name": "@hemicycle/core",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -17,13 +17,7 @@
   ],
   "scripts": {
     "dev": "NODE_ENV=development tsdown --watch",
-    "build": "tsdown",
+    "build": "tsdown --config-loader unrun",
     "lint": "eslint \"src/**/*.ts\""
-  },
-  "dependencies": {
-    "@hemicycle/helpers": "workspace:*"
-  },
-  "devDependencies": {
-    "@hemicycle/typescript-config": "workspace:*"
   }
 }

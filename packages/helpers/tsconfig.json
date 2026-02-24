@@ -2,20 +2,14 @@
   "extends": "@hemicycle/typescript-config/module.json",
   "include": [
     "src",
-    ".eslintrc.cjs"
   ],
   "exclude": [
     "node_modules"
   ],
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
     "baseUrl": "src",
     "outDir": "dist",
-    "paths": {
-      "@helpers/*": [
-        "src/*"
-      ]
-    }
+    "declaration": true,
+    "declarationMap": true,
   },
 }

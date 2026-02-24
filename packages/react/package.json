@@ -1,6 +1,6 @@
 {
   "name": "@hemicycle/react",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -17,17 +17,14 @@
   ],
   "scripts": {
     "dev": "NODE_ENV=development tsdown --watch",
-    "build": "tsdown",
+    "build": "tsdown --config-loader unrun",
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
-    "@hemicycle/vanilla": "0.1.0",
-    "@hemicycle/core": "0.1.0",
-    "@hemicycle/rendering": "workspace:*",
-    "@hemicycle/helpers": "workspace:*"
+    "@hemicycle/core": "0.1.3",
+    "@hemicycle/vanilla": "0.1.3"
   },
   "devDependencies": {
-    "@hemicycle/typescript-config": "workspace:*",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0"
   },

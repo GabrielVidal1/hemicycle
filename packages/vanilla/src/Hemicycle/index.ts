@@ -79,7 +79,7 @@ export class Hemicycle<
     return this.computedSeatData;
   }
 
-  getViewBox() {
+  getViewBox(): string {
     return computeViewBox(this.config);
   }
 

@@ -12,9 +12,14 @@
     "declaration": true,
     "declarationMap": true,
     "paths": {
-      "@rendering/*": [
-        "./*"
-      ]
+      "@hemicycle/helpers": [
+        "../../helpers/src/index.ts"
+      ],
     }
-  }
+  },
+  "references": [
+    {
+      "path": "../helpers"
+    }
+  ]
 }

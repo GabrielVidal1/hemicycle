@@ -6,7 +6,9 @@ up.docs:
 
 build:
 	yarn build-packages
-	yarn build-demo
+
+delete-node_modules:
+	find . -name "node_modules" -type d -prune -exec rm -rf '{}' +
 
 install:
 	yarn
@@ -16,3 +18,4 @@ test:
 
 lint:
 	yarn lint
+
