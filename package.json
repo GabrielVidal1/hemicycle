@@ -1,9 +1,11 @@
 {
   "private": true,
+  "name": "hemicycle",
   "type": "module",
   "scripts": {
     "dev:packages": "turbo run dev --filter=!docs",
     "dev:docs": "turbo run dev --filter=docs",
+    "dev:web": "turbo run dev --filter=web",
     "build": "turbo run build --filter=!docs",
     "build-demo": "turbo run build --filter=web",
     "build-packages": "turbo run build --filter=\"./packages/*\"",
@@ -27,7 +29,6 @@
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.0.18"
   },
-  "name": "with-vite-react",
   "packageManager": "yarn@1.22.22",
   "workspaces": [
     "apps/*",

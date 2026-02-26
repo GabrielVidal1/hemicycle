@@ -2,7 +2,7 @@ import { HemicycleArcAisleConfig } from "./arcAislesConfig";
 
 type SeatOrdering = "row" | "radial";
 
-export type HemicycleConfig = HemicycleArcAisleConfig & {
+export interface HemicycleConfig extends HemicycleArcAisleConfig {
   // BASE CONFIG
   /** Number of concentric seating rows (required). */
   rows: number;
@@ -43,4 +43,4 @@ export type HemicycleConfig = HemicycleArcAisleConfig & {
 
   /** Width of each angular aisle. Required when aislesCount > 0. Defaults to 2. */
   aislesWidth: number;
-};
+}

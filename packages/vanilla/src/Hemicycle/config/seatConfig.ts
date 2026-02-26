@@ -2,7 +2,7 @@ export const SEAT_SHAPES = ["arc", "rect", "circle"] as const;
 
 export type SeatShape = (typeof SEAT_SHAPES)[number];
 
-export type SeatConfig = {
+export interface SeatConfig {
   /** The shape of the seat (default: "arc"). */
   shape?: SeatShape;
 
@@ -14,9 +14,9 @@ export type SeatConfig = {
 
   /** Optional fill color for the seat (default: "lightgray"). */
   color?: string;
-};
+}
 
-export type ComputedSeatConfig<SC extends SeatConfig = SeatConfig> =
-  Required<SC> & {
+export type ComputedSeatConfig<SeatConfigType extends SeatConfig = SeatConfig> =
+  Required<SeatConfigType> & {
     path: string;
   };

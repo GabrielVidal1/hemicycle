@@ -1,6 +1,9 @@
 up:
 	yarn dev:packages
 
+up.web:
+	yarn dev:web
+	
 up.docs:
 	yarn dev:docs
 

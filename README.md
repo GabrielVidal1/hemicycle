@@ -1,32 +1,125 @@
-# `Turborepo` Vite starter
+# [hemicycle.dev](https://hemicycle.dev/)
 
-This is a community-maintained example. If you experience a problem, please submit a pull request with a fix. GitHub Issues will be closed.
+![Example](./docs/example.svg)
 
-## Using this example
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js >=18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org/)
 
-Run the following command:
+A TypeScript package for rendering parliament-style hemicycle seat charts — the fan-shaped seating layouts used to visualize legislative assemblies and voting bodies.
 
-```sh
-npx create-turbo@latest -e with-vite-react
+---
+
+## Packages
+
+| Package                                    | Version                                                                                                     | Description                                           |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| [`@hemicycle/core`](./packages/core)       | [![npm](https://img.shields.io/npm/v/@hemicycle/core)](https://www.npmjs.com/package/@hemicycle/core)       | Layout engine — computes seat coordinates and indices |
+| [`@hemicycle/vanilla`](./packages/vanilla) | [![npm](https://img.shields.io/npm/v/@hemicycle/vanilla)](https://www.npmjs.com/package/@hemicycle/vanilla) | Framework-free SVG renderer                           |
+| [`@hemicycle/react`](./packages/react)     | [![npm](https://img.shields.io/npm/v/@hemicycle/react)](https://www.npmjs.com/package/@hemicycle/react)     | React `<Hemicycle />` component                       |
+
+Pick the package that matches your stack. They build on each other — `vanilla` wraps `core`, and `react` wraps `vanilla` — so you only need to install one.
+
+---
+
+## Getting Started
+
+### React
+
+```bash
+npm install @hemicycle/react
 ```
 
-## What's inside?
+```tsx
+import { Hemicycle } from "@hemicycle/react";
 
-This Turborepo includes the following packages and apps:
+<Hemicycle
+  rows={7}
+  totalSeats={577}
+  data={members.map((m) => ({
+    idx: m.seatNumber,
+    seatConfig: { color: m.partyColor },
+  }))}
+/>;
+```
 
-### Apps and Packages
+### Vanilla JS / any framework
 
-- `web`: react [vite](https://vitejs.dev) ts app
-- `@hemicycle/core`: a stub component library shared by `web` application
-- `@hemicycle/eslint-config`: shared `eslint` configurations
-- `@hemicycle/typescript-config`: `tsconfig.json`s used throughout the monorepo
+```bash
+npm install @hemicycle/vanilla
+```
 
-Each package and app is 100% [TypeScript](https://www.typescriptlang.org/).
+```ts
+import { Hemicycle } from "@hemicycle/vanilla";
 
-### Utilities
+const hemicycle = new Hemicycle({ rows: 7, totalSeats: 577 });
+hemicycle.updateData(
+  members.map((m) => ({
+    idx: m.seatNumber,
+    seatConfig: { color: m.partyColor },
+  })),
+);
+hemicycle.render(document.querySelector("svg")!);
+```
 
-This Turborepo has some additional tools already setup for you:
+### Layout only (no rendering)
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+```bash
+npm install @hemicycle/core
+```
+
+```ts
+import { Hemicycle } from "@hemicycle/core";
+
+const hemicycle = new Hemicycle({ rows: 7, totalSeats: 577 });
+const layout = hemicycle.getSeatsLayout();
+// layout[i] → { x, y, innerR, outerR, angle1Rad, angle2Rad, ... }
+```
+
+---
+
+## Development
+
+This repo uses [Yarn workspaces](https://classic.yarnpkg.com/en/docs/workspaces/) and [Turborepo](https://turbo.build/).
+
+**Prerequisites:** Node.js ≥ 18, Yarn 1.22
+
+```bash
+# Install all dependencies
+yarn install
+
+# Build all packages
+yarn build
+
+# Run tests
+yarn test
+
+# Start all packages in watch mode
+yarn dev
+```
+
+---
+
+## Repo Structure
+
+```
+hemicycle/
+├── packages/
+│   ├── core/       # @hemicycle/core
+│   ├── vanilla/    # @hemicycle/vanilla
+│   └── react/      # @hemicycle/react
+├── apps/
+│   ├── docs/       # documentation
+│   └── web/        # demo site
+├── configs/        # shared tooling configs
+└── data/           # shared data packages
+```
+
+---
+
+## Author
+
+**Gabriel Vidal** — [gvidalayrinhac@gmail.com](mailto:gvidalayrinhac@gmail.com)
+
+## License
+
+[MIT](LICENSE)
