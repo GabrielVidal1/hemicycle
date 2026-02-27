@@ -11,7 +11,7 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
-    "@hemicycle/react": "0.1.4",
+    "@hemicycle/react": "0.1.5",
     "@tailwindcss/vite": "^4.2.0",
     "@vercel/analytics": "^1.6.1",
     "antd": "^6.3.0",

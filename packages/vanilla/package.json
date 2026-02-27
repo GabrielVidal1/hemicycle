@@ -1,6 +1,6 @@
 {
   "name": "@hemicycle/vanilla",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "description": "Hemicycle svg component for vanilla JS",
   "keywords": [
@@ -52,6 +52,6 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
-    "@hemicycle/core": "0.1.4"
+    "@hemicycle/core": "0.1.5"
   }
 }

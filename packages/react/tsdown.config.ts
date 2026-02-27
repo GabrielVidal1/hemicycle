@@ -12,5 +12,4 @@ export default defineConfig({
   tsconfig: "./tsconfig.json",
   external: [],
   exports: true,
-  minify: true,
 });
