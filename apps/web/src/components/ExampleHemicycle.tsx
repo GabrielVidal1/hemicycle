@@ -73,17 +73,18 @@ function SeatTooltipContent({
       <div
         className="flex items-center justify-between px-3 py-2 rounded-t"
         style={{ background: color + "22", borderBottom: `2px solid ${color}` }}
-      >
-        <span className="font-bold text-white tracking-widest uppercase text-[10px]">
-          {party.label}
-        </span>
-        <span className="text-white/50 text-[10px]">
-          #{String(seat.idx + 1).padStart(3, "0")}
-        </span>
-      </div>
+      />
 
       {/* body */}
       <div className="bg-[#111] rounded-b px-3 py-2.5 space-y-2.5">
+        <div className="flex items-center justify-between">
+          <span className="font-bold text-white tracking-widest uppercase text-[10px]">
+            {party.label}
+          </span>
+          <span className="text-white/50 text-[10px]">
+            #{String(seat.idx + 1).padStart(3, "0")}
+          </span>
+        </div>
         {/* row / col */}
         <div className="flex justify-between text-[10px]">
           <span className="text-white/40">
@@ -106,7 +107,15 @@ function SeatTooltipContent({
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export function HemicycleSVG({ animated }: { animated: boolean }) {
+interface HemicycleSVGProps {
+  animated: boolean;
+  disableAnimation?: boolean;
+}
+
+export function HemicycleSVG({
+  animated,
+  disableAnimation,
+}: HemicycleSVGProps) {
   const totalSeats = TOTAL_SEATS;
 
   const { width } = useScreen();
@@ -121,7 +130,7 @@ export function HemicycleSVG({ animated }: { animated: boolean }) {
           color: getSeatColor(idx, totalSeats),
           props: {
             style: {
-              opacity: animated ? 1 : 0,
+              opacity: animated || disableAnimation ? 1 : 0,
               transition: animated
                 ? `opacity 0.4s ease ${ff}s, transform 0.4s ease ${ff}s`
                 : "none",
@@ -141,8 +150,10 @@ export function HemicycleSVG({ animated }: { animated: boolean }) {
                     background: "transparent",
                     boxShadow: "none",
                   },
+                  root: {
+                    maxWidth: "none",
+                  },
                 }}
-                overlayStyle={{ maxWidth: "none" }}
                 mouseEnterDelay={0.05}
                 mouseLeaveDelay={0.1}
               >

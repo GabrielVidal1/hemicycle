@@ -16,12 +16,27 @@ function CodeBlock({ code, language: lang = "typescript" }: CodeBlockProps) {
     setTimeout(() => setCopied(false), 1500);
   };
 
+  const customOneDark = {
+    ...oneDark,
+    'pre[class*="language-"]': {
+      ...oneDark['pre[class*="language-"]'],
+      background: "#1A1A1A",
+    },
+    'code[class*="language-"]': {
+      ...oneDark['code[class*="language-"]'],
+      background: "#1A1A1A",
+    },
+  };
+
   return (
     <div className="relative group text-sm bg-black border border-white/20 rounded-none overflow-hidden">
       <SyntaxHighlighter
         language={lang}
-        style={oneDark}
+        style={customOneDark}
         customStyle={{
+          borderRadius: 0,
+          // bg-white/10
+          backgroundColor: "#1A1A1A",
           margin: 0,
           // background: "transparent",
           padding: "1rem",

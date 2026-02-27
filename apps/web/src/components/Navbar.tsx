@@ -23,7 +23,7 @@ export function Navbar() {
           href="/playground"
           className="rainbow-btn relative px-4 py-1.5 font-mono text-sm text-white overflow-hidden bg-black transition-colors duration-300"
         >
-          <span>Playground</span>
+          <span className="mix-blend-difference">Playground</span>
         </a>
         <a
           href="https://docs.hemicycle.dev"

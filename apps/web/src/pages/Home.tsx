@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import CodeBlock from "../components/CodeBlock";
 import { CorePreview } from "../components/CorePreview";
-import { HemicycleSVG } from "../components/ExampleHemicycle";
-import { ExternalLink } from "../components/ExternalLink";
 import { Footer } from "../components/Footer";
+import { Hero } from "../components/Hero";
 import { Navbar } from "../components/Navbar";
 import { PackageCard, PkgCardProps } from "../components/PackageCard";
 import { ReactPreview } from "../components/ReactPreview";
 import { VanillaPreview } from "../components/VanillaPreview";
+
+const LATEST_VERSION = import.meta.env.VITE_LATEST_VERSION || "0.1.3";
 
 const PACKAGES: PkgCardProps[] = [
   {
@@ -15,7 +16,7 @@ const PACKAGES: PkgCardProps[] = [
     description:
       "Drop-in React component. Per-seat wrappers, click handlers, full TypeScript generics.",
     npmUrl: "https://www.npmjs.com/package/@hemicycle/react",
-    version: "v0.1.3",
+    version: `v${LATEST_VERSION}`,
     accent: "linear-gradient(90deg, #FF0000, #FF00FF)",
   },
   {
@@ -23,7 +24,7 @@ const PACKAGES: PkgCardProps[] = [
     description:
       "Framework-free SVG renderer. Works anywhere a DOM exists — no React required.",
     npmUrl: "https://www.npmjs.com/package/@hemicycle/vanilla",
-    version: "v0.1.3",
+    version: `v${LATEST_VERSION}`,
     accent: "linear-gradient(90deg, #00FFFF, #0000FF)",
   },
   {
@@ -31,7 +32,7 @@ const PACKAGES: PkgCardProps[] = [
     description:
       "Pure geometry engine. Coordinates, indices, aisles. Zero rendering dependencies.",
     npmUrl: "https://www.npmjs.com/package/@hemicycle/core",
-    version: "v0.1.3",
+    version: `v${LATEST_VERSION}`,
     accent: "linear-gradient(90deg, #00FF00, #00FFFF)",
   },
 ];
@@ -83,6 +84,10 @@ const layout = chart.getSeatsLayout();
 };
 
 export default function Home() {
+  const animationReduced = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
   const [animated, setAnimated] = useState(false);
   const [activeTab, setActiveTab] = useState<"react" | "vanilla" | "core">(
     "react",
@@ -90,6 +95,10 @@ export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (animationReduced) {
+      setAnimated(true);
+      return;
+    }
     const timer = setTimeout(() => setAnimated(true), 100);
     return () => clearTimeout(timer);
   }, []);
@@ -109,97 +118,11 @@ export default function Home() {
       <Navbar />
 
       {/* ── Hero ── */}
-      <section
-        ref={heroRef}
-        className="px-6 md:px-12 pt-20 pb-10 max-w-6xl mx-auto"
-      >
-        <div className="grid md:grid-cols-5 gap-10 items-center">
-          <div className="col-span-2">
-            <div
-              className="font-mono text-xs tracking-widest text-white/30 uppercase mb-6"
-              style={{
-                opacity: animated ? 1 : 0,
-                transform: animated ? "none" : "translateY(8px)",
-                transition: "opacity 0.6s ease, transform 0.6s ease",
-              }}
-            >
-              Parliament · Assembly · Chamber
-            </div>
-            <h1
-              className="text-4xl md:text-7xl font-black tracking-tighter leading-none mb-6"
-              style={{
-                fontFamily: "'Georgia', serif",
-                opacity: animated ? 1 : 0,
-                transform: animated ? "none" : "translateY(16px)",
-                transition: "opacity 0.6s ease 0.1s, transform 0.6s ease 0.1s",
-              }}
-            >
-              Hemi
-              <span
-                style={{
-                  background:
-                    "linear-gradient(90deg, #FF0000, #FFFF00, #00FF00, #00FFFF, #0000FF, #FF00FF)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                cycle
-              </span>
-              {/* <span className="text-3xl ml-1 tracking-normal">.dev</span> */}
-            </h1>
-            <p
-              className="text-white/60 text-lg leading-relaxed mb-8 max-w-sm"
-              style={{
-                opacity: animated ? 1 : 0,
-                transform: animated ? "none" : "translateY(16px)",
-                transition: "opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s",
-              }}
-            >
-              TypeScript library for rendering parliament-style seat charts.
-              React, vanilla JS, or layout-only — pick what fits.
-            </p>
-            <div
-              className="flex items-center gap-4"
-              style={{
-                opacity: animated ? 1 : 0,
-                transform: animated ? "none" : "translateY(16px)",
-                transition: "opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s",
-              }}
-            >
-              <a
-                href="#install"
-                className="font-mono text-sm px-6 py-2.5 bg-white text-black hover:bg-white/90 transition-colors"
-              >
-                Get started
-              </a>
-              <ExternalLink
-                href="https://github.com/GabrielVidal1/hemicycle"
-                label="View on GitHub"
-              />
-            </div>
-          </div>
-
-          {/* Hemicycle visual */}
-          <div
-            className="col-span-3 relative"
-            style={{
-              opacity: animated ? 1 : 0,
-              transition: "opacity 0.4s ease 0.2s",
-            }}
-          >
-            {/* Subtle glow behind the chart */}
-            <div
-              className="absolute inset-0 blur-3xl opacity-20 pointer-events-none"
-              style={{
-                background:
-                  "radial-gradient(ellipse at center bottom, rgba(255,255,255,0.3) 0%, transparent 70%)",
-              }}
-            />
-            <HemicycleSVG animated={animated} />
-          </div>
-        </div>
-      </section>
+      <Hero
+        heroRef={heroRef}
+        animate={animated}
+        disableAnimation={animationReduced}
+      />
 
       {/* ── Divider ── */}
       <div className="border-t border-white/10 mx-6 md:mx-12" />

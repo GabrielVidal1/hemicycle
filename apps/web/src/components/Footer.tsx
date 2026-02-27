@@ -1,3 +1,4 @@
+import { Heart } from "lucide-react";
 import { ExternalLink } from "./ExternalLink";
 
 export function Footer() {
@@ -8,7 +9,7 @@ export function Footer() {
           hemicycle.dev
         </div>
         <div className="text-white/30 text-sm">
-          Made with ❤️ by{" "}
+          Made with <Heart className="inline mb-0.5" size={15} fill="grey" /> by{" "}
           <a
             href="mailto:gvidalayrinhac@gmail.com"
             className="text-white/50 hover:text-white transition-colors"
