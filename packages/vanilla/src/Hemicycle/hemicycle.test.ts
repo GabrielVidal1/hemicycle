@@ -52,7 +52,6 @@ describe("Hemicycle", () => {
     expect(svg.children.length).toBe(5);
 
     Array.from(svg.children).forEach((child, i) => {
-      console.log(i, child.getAttribute("fill"));
       expect(child.tagName).toBe("path");
       if (i === 0) {
         expect(child.getAttribute("fill")).toBe("red");
