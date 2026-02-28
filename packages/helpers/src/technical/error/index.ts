@@ -1,10 +1,12 @@
-import { logger } from "../logger";
-
 export class HemicycleError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "HemicycleError";
   }
+}
+
+export function isHemicycleError(error: unknown): error is HemicycleError {
+  return error instanceof Error && error.name === "HemicycleError";
 }
 
 export class HemicycleParamValidationError extends HemicycleError {
@@ -28,7 +30,7 @@ export const getParamValidator = (
     if (mode === "throw") {
       throw new HemicycleParamValidationError(`${suffix}${paramName}`, reason);
     } else {
-      logger.warn(message);
+      console.warn(message);
     }
   };
 };

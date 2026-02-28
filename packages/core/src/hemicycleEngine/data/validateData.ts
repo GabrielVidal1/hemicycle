@@ -1,4 +1,4 @@
-import { HemicycleParamValidationError, logger } from "@hemicycle/helpers";
+import { HemicycleParamValidationError } from "@hemicycle/helpers";
 import { HemicycleConfig } from "../config";
 import {
   isHemicycleDataWithCoordinates,
@@ -18,7 +18,7 @@ export function validateData<T extends object>(
   // Basic validation to check if each data item has either coordinates or idx
   data.forEach((item, index) => {
     if (isHemicycleDataWithCoordinates(item) && isHemicycleDataWithIdx(item)) {
-      logger.warn(
+      console.warn(
         `Data item at index ${index} has both coordinates and idx, coordinates will be used.`,
       );
     }
@@ -26,14 +26,14 @@ export function validateData<T extends object>(
       !isHemicycleDataWithCoordinates(item) &&
       !isHemicycleDataWithIdx(item)
     ) {
-      logger.warn(
+      console.warn(
         `Data item at index ${index} is missing both coordinates and idx, it will be ignored.`,
       );
     }
 
     // idx outside bounds
     if (isHemicycleDataWithIdx(item) && config.totalSeats <= item.idx) {
-      logger.warn(
+      console.warn(
         `Data item at index ${index} has idx ${item.idx} which is out of bounds (totalSeats: ${config.totalSeats}), it will be ignored.`,
       );
     }
@@ -44,7 +44,7 @@ export function validateData<T extends object>(
       (item.rowIndex >= config.rows ||
         item.seatIndex >= seatsPerRow[item.rowIndex])
     ) {
-      logger.warn(
+      console.warn(
         `Data item at index ${index} has coordinates (rowIndex: ${item.rowIndex}, seatIndex: ${item.seatIndex}) which are out of bounds, it will be ignored.`,
       );
     }
