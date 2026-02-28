@@ -1,8 +1,9 @@
 import { Hemicycle, HemicycleData } from "@hemicycle/react";
 import { ComputedSeatData } from "@hemicycle/vanilla";
-import { Tooltip } from "antd";
+
 import { useMemo } from "react";
 import { useScreen } from "../hooks/useScreen";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -118,7 +119,7 @@ export function HemicycleSVG({
 }: HemicycleSVGProps) {
   const totalSeats = TOTAL_SEATS;
 
-  const { width } = useScreen();
+  const { width: screenWidth } = useScreen();
 
   const data = useMemo<HemicycleData[]>(() => {
     return Array.from({ length: totalSeats }, (_, idx) => {
@@ -139,25 +140,11 @@ export function HemicycleSVG({
           },
           wrapper: (content, seat) =>
             seat ? (
-              <Tooltip
-                key={seat.idx}
-                title={<SeatTooltipContent seat={seat} total={totalSeats} />}
-                // transparent background — the card styles itself
-                color="transparent"
-                styles={{
-                  container: {
-                    padding: 0,
-                    background: "transparent",
-                    boxShadow: "none",
-                  },
-                  root: {
-                    maxWidth: "none",
-                  },
-                }}
-                mouseEnterDelay={0.05}
-                mouseLeaveDelay={0.1}
-              >
-                {content}
+              <Tooltip>
+                <TooltipTrigger asChild>{content}</TooltipTrigger>
+                <TooltipContent>
+                  <SeatTooltipContent seat={seat} total={totalSeats} />
+                </TooltipContent>
               </Tooltip>
             ) : (
               content
@@ -167,11 +154,14 @@ export function HemicycleSVG({
     });
   }, [totalSeats, animated]);
 
+  const width = Math.min(screenWidth / 1.3, 600);
+  const height = (width / 600) * 350;
+
   return (
     <Hemicycle
       rows={6}
-      width={Math.min(width, 600)}
-      height={350}
+      width={width}
+      height={height}
       totalSeats={totalSeats}
       data={data}
       totalAngle={200}

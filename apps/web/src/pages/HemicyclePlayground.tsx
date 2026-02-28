@@ -1,8 +1,13 @@
+import { Slider } from "@/components/ui/slider";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Hemicycle, HemicycleData, SeatShape } from "@hemicycle/react";
-import { InputNumber, Slider, Tooltip } from "antd";
 import React, { useMemo, useRef, useState } from "react";
 import { Footer } from "../components/Footer";
-import { Navbar } from "../components/Navbar";
+import Navbar from "../components/Navbar";
 
 // ─── Section Label ────────────────────────────────────────────────────────────
 const SectionLabel: React.FC<{ children: React.ReactNode }> = ({
@@ -44,19 +49,17 @@ const ControlRow: React.FC<ControlRowProps> = ({
         min={min}
         max={max}
         step={step}
-        value={value}
-        onChange={(v) => onChange(v as number)}
-        tooltip={{ formatter: null }}
+        value={[value]}
+        onValueChange={(v) => onChange(v[0])}
       />
     </div>
 
-    <InputNumber
+    <input
       min={min}
       max={max}
       step={step}
       value={value}
-      onChange={(v) => onChange(v as number)}
-      size="small"
+      onChange={(v) => onChange(v.target.valueAsNumber)}
       className="w-14.5! shrink-0"
       style={{
         fontSize: 11,
@@ -65,9 +68,6 @@ const ControlRow: React.FC<ControlRowProps> = ({
         borderColor: "rgba(255,255,255,0.15)",
         borderRadius: 0,
         color: "rgba(255,255,255,0.7)",
-      }}
-      styles={{
-        input: { background: "transparent", color: "rgba(255,255,255,0.7)" },
       }}
     />
   </div>
@@ -136,8 +136,8 @@ const ExportButton: React.FC<ExportButtonProps> = ({
     status === "success"
       ? "text-emerald-400 border-emerald-400/40"
       : status === "error"
-      ? "text-red-400 border-red-400/40"
-      : "text-white/40 border-white/15 hover:text-white/80 hover:border-white/40";
+        ? "text-red-400 border-red-400/40"
+        : "text-white/40 border-white/15 hover:text-white/80 hover:border-white/40";
 
   return (
     <button
@@ -275,9 +275,12 @@ export const HemicyclePlayground: React.FC = () => {
         {/* ── Controls Panel ───────────────────────────────────────────── */}
         <aside className="w-120 shrink-0 bg-black border-r border-white/10 flex flex-col">
           {/* Scrollable controls */}
-          <div className="flex-1 overflow-y-auto px-5 py-6 overscroll-contain" style={{
-            scrollbarWidth: "none",
-          }}>
+          <div
+            className="flex-1 overflow-y-auto px-5 py-6 overscroll-contain"
+            style={{
+              scrollbarWidth: "none",
+            }}
+          >
             <SectionLabel>Layout</SectionLabel>
             <ControlRow
               label="Rows"
@@ -453,14 +456,13 @@ export const HemicyclePlayground: React.FC = () => {
                 radius: shape === "circle" ? radius : undefined,
                 borderRadius: seatBorderRadius,
                 wrapper: (content, data) => (
-                  <Tooltip
-                    title={
+                  <Tooltip key={data?.idx}>
+                    <TooltipTrigger asChild>{content}</TooltipTrigger>
+                    <TooltipContent>
                       <span style={{ fontFamily: "monospace", fontSize: 11 }}>
                         seat {data?.idx}
-                      </span>
-                    }
-                  >
-                    {content}
+                      </span>{" "}
+                    </TooltipContent>
                   </Tooltip>
                 ),
                 props: {

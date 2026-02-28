@@ -89,7 +89,7 @@ export function Hero({
 
         {/* Hemicycle visual */}
         <div
-          className="col-span-3 relative"
+          className="col-span-3 relative overflow-clip"
           style={{
             ...opacityStyle,
             transition: "opacity 0.4s ease 0.2s",

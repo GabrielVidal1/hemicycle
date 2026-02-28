@@ -1,4 +1,9 @@
-export function ExternalLink({ href, label }: { href: string; label: string }) {
+interface ExternalLinkProps {
+  href: string;
+  label: string | React.ReactNode;
+}
+
+export function ExternalLink({ href, label }: ExternalLinkProps) {
   return (
     <a
       href={href}

@@ -1,3 +1,4 @@
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { Analytics } from "@vercel/analytics/react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -18,10 +19,10 @@ const router = createBrowserRouter([
 
 const App = () => {
   return (
-    <>
-      <RouterProvider router={router} />
-      <Analytics />
-    </>
+      <TooltipProvider>
+        <RouterProvider router={router} />
+        <Analytics />
+      </TooltipProvider>
   );
 };
 

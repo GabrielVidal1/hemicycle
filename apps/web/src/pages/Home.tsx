@@ -3,10 +3,11 @@ import CodeBlock from "../components/CodeBlock";
 import { CorePreview } from "../components/CorePreview";
 import { Footer } from "../components/Footer";
 import { Hero } from "../components/Hero";
-import { Navbar } from "../components/Navbar";
+import Navbar from "../components/Navbar";
 import { PackageCard, PkgCardProps } from "../components/PackageCard";
 import { ReactPreview } from "../components/ReactPreview";
 import { VanillaPreview } from "../components/VanillaPreview";
+import { Features } from "./Home/Features";
 
 const LATEST_VERSION = import.meta.env.VITE_LATEST_VERSION || "0.1.3";
 
@@ -218,48 +219,7 @@ export default function Home() {
       <div className="border-t border-white/10 mx-6 md:mx-12" />
 
       {/* ── Feature grid ── */}
-      <section className="px-6 md:px-12 py-16 max-w-6xl mx-auto">
-        <h2 className="font-mono text-xs text-white/30 uppercase tracking-widest mb-8">
-          Features
-        </h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[
-            {
-              title: "Concentric rows",
-              body: "Distribute seats proportionally across rows by arc length, or specify counts manually.",
-            },
-            {
-              title: "Angular & arc aisles",
-              body: "Insert radial gaps to separate party groups, or concentric walkways between row bands.",
-            },
-            {
-              title: "Three seat shapes",
-              body: "Arc wedges, rectangles, or circles — each with configurable radius and border radius.",
-            },
-            {
-              title: "Per-seat data",
-              body: "Map any typed data to seats by index or by (row, seat) coordinate. Unmapped seats stay neutral.",
-            },
-            {
-              title: "Radial & row ordering",
-              body: "Choose row-major or radial-major index assignment to match your data source.",
-            },
-            {
-              title: "TypeScript generics",
-              body: "Full end-to-end type safety from your data model through to rendered SVG attributes.",
-            },
-          ].map(({ title, body }) => (
-            <div key={title} className="border-l border-white/10 pl-5">
-              <div className="text-white text-sm font-semibold mb-1.5">
-                {title}
-              </div>
-              <div className="text-white/40 text-sm leading-relaxed">
-                {body}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <Features />
 
       {/* ── Divider ── */}
       <div className="border-t border-white/10 mx-6 md:mx-12" />
