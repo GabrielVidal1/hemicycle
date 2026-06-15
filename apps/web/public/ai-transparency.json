@@ -1,0 +1,6 @@
+{
+  "model": "Claude Opus 4.8",
+  "harness": "Forge",
+  "summary": "Cloned the existing hemicycle monorepo, wired its web demo app into the homelab deployment workflow (deploy script + npm deploy task), added the AI transparency widget, then built and deployed it to hemicycle.dev.gabvdl.xyz via zipgo on raspy2 with Let's Encrypt HTTPS.",
+  "prompt": "clone my hemicycle repo from github into my projects and read new project skill to add missing metadata and deployement\ndeploy & notify"
+}
