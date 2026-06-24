@@ -1,0 +1,84 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working in this repo.
+
+## What this is
+
+[hemicycle.dev](https://hemicycle.dev/) — a TypeScript monorepo for rendering parliament-style
+hemicycle seat charts (the fan-shaped seating layouts used to visualize legislative assemblies and
+voting bodies). It ships as three published npm packages that build on each other, plus a demo site
+and docs.
+
+## Tooling
+
+- **Yarn 1.22 workspaces** + **Turborepo** (`turbo.json`). Node ≥ 18.
+- Packages are bundled with **tsdown** (→ `dist/` with `.mjs`/`.cjs`/`.d.mts`). The web app uses
+  **Vite**; docs use **Docusaurus**.
+- **Vitest** for tests (`vitest.config.ts`, jsdom env). **ESLint** + **Prettier**.
+- **Changesets** for versioning/publishing the packages.
+
+## Layout
+
+```
+packages/
+  core/        @hemicycle/core      — layout engine: computes seat coordinates/indices (no deps)
+  vanilla/     @hemicycle/vanilla   — framework-free SVG renderer (wraps core)
+  react/       @hemicycle/react     — <Hemicycle /> component (wraps vanilla)
+  helpers/     internal-only utils (no package.json / not published; TS project ref)
+  rendering/   internal-only rendering utils (not published; TS project ref)
+apps/
+  web/         demo site (Vite + React + Tailwind v4 + radix-ui) — deployed to hemicycle.dev.gabvdl.xyz
+  docs/        Docusaurus documentation site
+configs/
+  eslint-config/      @hemicycle/eslint-config
+  typescript-config/  @hemicycle/typescript-config
+data/
+  french-assemblee-nationale/  @hemicycle/french-assemblee-nationale — sample dataset (577 seats)
+```
+
+The published dependency chain is **core → vanilla → react**: each wraps the one below, so a consumer
+installs only one of them.
+
+## Common commands
+
+Run from the repo root (Makefile wraps the yarn/turbo scripts):
+
+```bash
+make install        # yarn install
+make up             # yarn dev:packages — watch-build all packages (excludes docs)
+make up.web         # yarn dev:web — run the demo site dev server (port 5173)
+make up.docs        # yarn dev:docs — run the Docusaurus docs
+make build          # yarn build-packages — build packages/* only
+make test           # vitest
+make lint           # turbo run lint
+
+yarn build          # build everything except docs
+yarn build-demo     # build the web app
+yarn changeset      # author a changeset (run before merging a publishable change)
+yarn version-packages / yarn release   # changeset version / publish to npm
+```
+
+## Conventions / gotchas
+
+- **`helpers` and `rendering` have no `package.json`** — they're internal-only TypeScript project
+  references (see root `tsconfig.json`), consumed via path mapping, not workspace packages. Don't try
+  to publish them.
+- When changing a published package's public API, **add a changeset** (`yarn changeset`) so the
+  release tooling picks it up.
+- React is pinned to 18.3.1 via root `resolutions` — keep React deps in that range.
+- Turbo caches `build` keyed on `src/**`, `package.json`, `tsconfig.json`; outputs are `dist/`/`build/`.
+
+## Deploying the demo site
+
+`apps/web` deploys to **https://hemicycle.dev.gabvdl.xyz** via zipgo on raspy2:
+
+```bash
+cd apps/web && npm run deploy   # builds, rsyncs dist/ to raspy2, then patches og:image meta
+```
+
+The deploy target is `raspy2:.../domains/gabvdl.xyz/dev./hemicycle.` (zipgo's trailing-dot subdomain
+convention — folders ending in `.` are subdomains nested under the apex). See `apps/web/scripts/deploy.sh`.
+
+## Committing
+
+This project lives on the self-hosted Gitea. Use the `commit-project` skill to commit and push.
