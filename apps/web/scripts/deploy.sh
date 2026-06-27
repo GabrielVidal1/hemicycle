@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 # Deploy the production build to zipgo on raspy2 (internet HTTPS).
 #
-# zipgo routing convention: inside a domain folder, a SUBDOMAIN folder must end
-# in a TRAILING DOT, and subdomains nest under the apex domain folder. A folder
-# without a trailing dot is served as a path under the apex, NOT a subdomain.
-#   domains/gabvdl.xyz/dev./hemicycle.  ->  https://hemicycle.dev.gabvdl.xyz
+# zipgo serves each domain from its own folder under domains/. A trailing-dot
+# subfolder (e.g. www.) is a subdomain; when a www. subdomain exists zipgo
+# auto-redirects the apex to it, so the build lives in the www. folder. zipgo/
+# Caddy auto-issues a Let's Encrypt cert once the domain's DNS A record points
+# at the box and raspy2's Traefik routes it (see migration doc).
+#   domains/hemicycle.dev/www./  ->  https://www.hemicycle.dev  (apex 308s here)
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-REMOTE_DEST="raspy2:/home/gabrielvidal/services/domains/gabvdl.xyz/dev./hemicycle."
-URL="https://hemicycle.dev.gabvdl.xyz"
+REMOTE_DEST="raspy2:/home/gabrielvidal/services/domains/hemicycle.dev/www./"
+URL="https://hemicycle.dev"
 PORT="5173"
 
 RSYNC_OPTS=(-avz --delete)
@@ -23,8 +25,8 @@ if [ ! -d "$PROJECT_DIR/dist" ]; then
   exit 1
 fi
 
-# Ensure the dev. subdomain folder exists on raspy2.
-ssh raspy2 'mkdir -p /home/gabrielvidal/services/domains/gabvdl.xyz/dev.'
+# Ensure the www. subdomain folder exists on raspy2.
+ssh raspy2 'mkdir -p "/home/gabrielvidal/services/domains/hemicycle.dev/www."'
 
 # --delete keeps the target an exact mirror of dist/ (removes stale files).
 rsync "${RSYNC_OPTS[@]}" "$PROJECT_DIR/dist/" "$REMOTE_DEST"

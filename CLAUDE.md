@@ -27,7 +27,7 @@ packages/
   helpers/     internal-only utils (no package.json / not published; TS project ref)
   rendering/   internal-only rendering utils (not published; TS project ref)
 apps/
-  web/         demo site (Vite + React + Tailwind v4 + radix-ui) — deployed to hemicycle.dev.gabvdl.xyz
+  web/         demo site (Vite + React + Tailwind v4 + radix-ui) — deployed to hemicycle.dev
   docs/        Docusaurus documentation site
 configs/
   eslint-config/      @hemicycle/eslint-config
@@ -70,14 +70,18 @@ yarn version-packages / yarn release   # changeset version / publish to npm
 
 ## Deploying the demo site
 
-`apps/web` deploys to **https://hemicycle.dev.gabvdl.xyz** via zipgo on raspy2:
+`apps/web` deploys to **https://hemicycle.dev** (the apex domain) via zipgo on raspy2:
 
 ```bash
 cd apps/web && npm run deploy   # builds, rsyncs dist/ to raspy2, then patches og:image meta
 ```
 
-The deploy target is `raspy2:.../domains/gabvdl.xyz/dev./hemicycle.` (zipgo's trailing-dot subdomain
-convention — folders ending in `.` are subdomains nested under the apex). See `apps/web/scripts/deploy.sh`.
+The deploy target is `raspy2:.../domains/hemicycle.dev/www./` — zipgo auto-308-redirects the apex to
+`www.`, so the build lives in the `www.` folder. zipgo/Caddy auto-issues a Let's Encrypt cert once
+`hemicycle.dev`'s DNS A record points at the box (`82.65.97.49`) and raspy2's Traefik routes it. DNS
+is managed in Vercel (nameservers only; the site is no longer hosted on Vercel). See
+`apps/web/scripts/deploy.sh`. Analytics: self-hosted Matomo, dedicated `idSite=3`. Full migration
+runbook: `homelab/data/log/2026-06-27-vercel-to-raspy2-migration.md`.
 
 ## Committing
 

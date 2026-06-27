@@ -1,5 +1,4 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Analytics } from "@vercel/analytics/react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { HemicyclePlayground } from "./pages/HemicyclePlayground";
@@ -21,7 +20,6 @@ const App = () => {
   return (
       <TooltipProvider>
         <RouterProvider router={router} />
-        <Analytics />
       </TooltipProvider>
   );
 };
