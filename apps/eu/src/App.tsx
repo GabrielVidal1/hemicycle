@@ -121,7 +121,7 @@ export function App() {
           </select>
           {ready && (
             <span className="picker-count">
-              {procedures.length} files · terms 9–10
+              {procedures.length} files · terms 8–10
             </span>
           )}
         </div>
