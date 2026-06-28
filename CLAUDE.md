@@ -28,6 +28,8 @@ packages/
   rendering/   internal-only rendering utils (not published; TS project ref)
 apps/
   web/         demo site (Vite + React + Tailwind v4 + radix-ui) — deployed to hemicycle.dev
+  fr/          fr.hemicycle.dev — French Assembly votes-by-law viewer (Vite + React) using
+               <Hemicycle/> + @hemicycle/french-assemblee-nationale-votes
   docs/        Docusaurus documentation site
 configs/
   eslint-config/      @hemicycle/eslint-config
@@ -86,6 +88,20 @@ The deploy target is `raspy2:.../domains/hemicycle.dev/www./` — zipgo auto-308
 is managed in Vercel (nameservers only; the site is no longer hosted on Vercel). See
 `apps/web/scripts/deploy.sh`. Analytics: self-hosted Matomo, dedicated `idSite=3`. Full migration
 runbook: `homelab/data/log/2026-06-27-vercel-to-raspy2-migration.md`.
+
+## Subdomain sites (fr.hemicycle.dev, …)
+
+`*.hemicycle.dev` is a **wildcard A record → 82.65.97.49** (raspy2) in Vercel DNS (Vercel
+is DNS-only; the explicit `*` A overrides Vercel's default `*` ALIAS). raspy2's Traefik
+already routes any `*.hemicycle.dev` host to zipgo via `HostRegexp`/`HostSNIRegexp`, so a
+**new subdomain only needs a zipgo folder** — no DNS or Traefik change. zipgo serves a
+subdomain from a trailing-dot folder: `domains/hemicycle.dev/<sub>./`. Deploy `apps/fr`:
+
+```bash
+cd apps/fr && npm run deploy   # builds, rsyncs dist/ → raspy2 fr. folder, restarts zipgo
+```
+
+Caddy auto-issues the Let's Encrypt cert on the first HTTPS request. See `apps/fr/scripts/deploy.sh`.
 
 ## Committing
 
