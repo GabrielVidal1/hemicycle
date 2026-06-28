@@ -1,0 +1,10 @@
+{
+  "extends": "@hemicycle/typescript-config/module.json",
+  "include": ["index.ts", "src", "scripts"],
+  "compilerOptions": {
+    "resolveJsonModule": false,
+    "esModuleInterop": true,
+    "declaration": true
+  },
+  "exclude": ["node_modules", "dist", "data", "public"]
+}
