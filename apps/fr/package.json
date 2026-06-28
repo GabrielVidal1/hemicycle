@@ -11,6 +11,7 @@
     "lint": "eslint \"src/**/*.ts*\""
   },
   "dependencies": {
+    "@hemicycle/french-assemblee-nationale-debats": "*",
     "@hemicycle/french-assemblee-nationale-votes": "*",
     "@hemicycle/react": "*",
     "react": "^18.2.0",

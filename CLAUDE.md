@@ -28,8 +28,12 @@ packages/
   rendering/   internal-only rendering utils (not published; TS project ref)
 apps/
   web/         demo site (Vite + React + Tailwind v4 + radix-ui) — deployed to hemicycle.dev
-  fr/          fr.hemicycle.dev — French Assembly votes-by-law viewer (Vite + React) using
-               <Hemicycle/> + @hemicycle/french-assemblee-nationale-votes
+  fr/          fr.hemicycle.dev — French Assembly LAW EXPLAINER (Vite + React): per law, an
+               LLM plain-language summary + arguments pour/contre with sources (Comprendre),
+               the <Hemicycle/> vote (Le vote), and per-séance summaries + a full-transcript
+               reader (Les débats). Uses @hemicycle/french-assemblee-nationale-votes +
+               -debats. Serves the debats package's public/ at /debats via an inline Vite
+               plugin (dev middleware + build copy in vite.config.ts).
   eu/          eu.hemicycle.dev — European Parliament votes-by-file viewer (Vite + React) using
                <Hemicycle/> + @hemicycle/european-parliament-votes. NOTE: the EP dataset is large,
                so the app fetches it as static JSON from public/data (copied by scripts/copy-data.sh
@@ -47,6 +51,13 @@ data/
   european-parliament-votes/         @hemicycle/european-parliament-votes — EP roll-call votes, terms 9–10
                                      (2019→present), from HowTheyVote.eu (CC BY 4.0). Same shape as the AN votes
                                      package (index + per-year detail + reference); `yarn fetch` to regenerate.
+  french-assemblee-nationale-debats/ @hemicycle/french-assemblee-nationale-debats — AN debate transcripts
+                                     (comptes rendus, Sycéron XML, leg 16–17) parsed + segmented per text +
+                                     linked to votes dossiers (`yarn fetch`), then summarized into per-law
+                                     explainers by a LOCAL LLM (`LMSTUDIO_API_KEY=… yarn summarize`). Use a
+                                     NON-reasoning model (default gemma-4-26b-a4b-it) — qwen3.6 reasons and
+                                     never emits JSON. Summaries (public/summaries) are committed; transcripts
+                                     cache to .cache (gitignored). See its README.
 ```
 
 The published dependency chain is **core → vanilla → react**: each wraps the one below, so a consumer
