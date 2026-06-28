@@ -1,0 +1,25 @@
+{
+  "name": "@hemicycle/french-assemblee-nationale-votes",
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "fetch": "tsx scripts/fetch-data.ts",
+    "dev": "NODE_ENV=development tsdown --watch",
+    "build": "tsdown"
+  },
+  "devDependencies": {
+    "fflate": "^0.8.2",
+    "tsx": "^4.21.0",
+    "typescript": "5.5.4"
+  }
+}
