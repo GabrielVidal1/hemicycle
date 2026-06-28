@@ -1,3 +1,7 @@
+// NOTE: import ONLY types from the package. Importing any runtime value pulls
+// its entry module, whose loaders reference dynamic imports of the bundled JSON
+// chunks — which makes rollup OOM on the (large) EP dataset. So POSITION_COLORS
+// and listProcedures are inlined here instead.
 import type {
   DetailYear,
   Group,
@@ -7,7 +11,42 @@ import type {
   VoteDetail,
   VoteIndexEntry,
 } from "@hemicycle/european-parliament-votes";
-import { POSITION_COLORS } from "@hemicycle/european-parliament-votes";
+
+/** Default palette for colouring seats by vote position (mirrors the package). */
+export const POSITION_COLORS: Record<Position, string> = {
+  for: "#3a9d4e",
+  against: "#c0392b",
+  abstention: "#e0a32e",
+  didNotVote: "#c9ccd1",
+};
+
+/**
+ * Group the index into distinct procedures (dossiers / resolutions), newest
+ * first. Inlined from the package to avoid importing its runtime. Votes with no
+ * procedure reference are skipped.
+ */
+export function listProcedures(index: VoteIndexEntry[]): Procedure[] {
+  const map = new Map<string, Procedure>();
+  for (const e of index) {
+    if (!e.procedureReference) continue;
+    let p = map.get(e.procedureReference);
+    if (!p) {
+      p = {
+        reference: e.procedureReference,
+        title: e.procedureTitle,
+        type: e.procedureType,
+        term: e.term,
+        lastVote: e.timestamp,
+        votes: [],
+      };
+      map.set(e.procedureReference, p);
+    }
+    p.votes.push(e);
+    if (e.timestamp > p.lastVote) p.lastVote = e.timestamp;
+    if (!p.title && e.procedureTitle) p.title = e.procedureTitle;
+  }
+  return [...map.values()].sort((a, b) => (a.lastVote < b.lastVote ? 1 : -1));
+}
 
 /**
  * Left → right political ordering of EP groups by group code, so party wedges

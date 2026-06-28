@@ -1,21 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Hemicycle, type HemicycleData } from "@hemicycle/react";
-import {
-  listProcedures,
-  POSITION_COLORS,
-  type DetailYear,
-  type Group,
-  type Procedure,
-  type VoteDetail,
-  type VoteIndexEntry,
+import type {
+  DetailYear,
+  Group,
+  Procedure,
+  VoteDetail,
+  VoteIndexEntry,
 } from "@hemicycle/european-parliament-votes";
 import { loadGroups, loadVotesIndex, loadYearDetail } from "./data";
 import {
   buildSeats,
   euDate,
   groupLabel,
+  listProcedures,
   orderedGroups,
   pickDisplayVote,
+  POSITION_COLORS,
   POSITION_LABELS,
   POSITIONS,
   tallies,
