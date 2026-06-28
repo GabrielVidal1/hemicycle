@@ -1,0 +1,320 @@
+:root {
+  --bg: #f6f5f1;
+  --panel: #ffffff;
+  --ink: #1a1a22;
+  --muted: #6b6b76;
+  --line: #e4e2da;
+  --blue: #034ea2;
+  --pour: #3a9d4e;
+  --contre: #c0392b;
+  --abst: #e0a32e;
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(20, 20, 30, 0.05), 0 8px 30px rgba(20, 20, 30, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Iowan Old Style", "Palatino Linotype", Georgia, ui-serif, serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 20px 64px;
+}
+
+/* ── Top bar ─────────────────────────────────────────────── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter: blur(8px);
+  padding: 18px 0 14px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.brand-mark {
+  font-size: 26px;
+  color: var(--blue);
+  letter-spacing: -3px;
+}
+
+.brand h1 {
+  font-size: 19px;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.tagline {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ── Law picker (top center) ─────────────────────────────── */
+.picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  max-width: 620px;
+}
+
+.picker-label {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.picker select {
+  width: 100%;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  padding: 11px 38px 11px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b76' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")
+    no-repeat right 16px center;
+  box-shadow: var(--shadow);
+  appearance: none;
+  cursor: pointer;
+  text-overflow: ellipsis;
+}
+
+.picker select:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.picker-count {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ── Vote view ───────────────────────────────────────────── */
+main {
+  padding-top: 28px;
+}
+
+.status {
+  text-align: center;
+  color: var(--muted);
+  padding: 60px 0;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.vote-head {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.vote-head h2 {
+  font-size: 26px;
+  line-height: 1.2;
+  margin: 0 auto;
+  max-width: 760px;
+  letter-spacing: -0.015em;
+}
+
+.vote-sub {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 13px;
+}
+
+.vote-objet {
+  margin: 10px auto 0;
+  max-width: 660px;
+  font-size: 14px;
+  color: #44444e;
+  font-style: italic;
+}
+
+.verdict {
+  width: max-content;
+  margin: 0 auto 6px;
+  padding: 6px 18px;
+  border-radius: 999px;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+}
+
+.is-adopted {
+  background: color-mix(in srgb, var(--pour) 16%, white);
+  color: #1f6b30;
+}
+
+.is-rejected {
+  background: color-mix(in srgb, var(--contre) 14%, white);
+  color: #962017;
+}
+
+/* ── Chart ───────────────────────────────────────────────── */
+.chart {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px 24px 18px;
+  margin-bottom: 22px;
+}
+
+.chart svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.totals {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.total {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  column-gap: 8px;
+  align-items: center;
+}
+
+.total .dot {
+  grid-row: span 2;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.total-n {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.total-l {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+/* ── Breakdown table ─────────────────────────────────────── */
+.breakdown {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 13.5px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.breakdown th,
+.breakdown td {
+  padding: 9px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.breakdown thead th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  background: #fbfaf7;
+}
+
+.breakdown tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.breakdown .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.breakdown .pos {
+  color: var(--muted);
+  text-transform: capitalize;
+}
+
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  margin-right: 9px;
+  vertical-align: middle;
+}
+
+.vote-foot {
+  text-align: center;
+  color: var(--muted);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 12px;
+  margin-top: 16px;
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+.footer {
+  margin-top: 40px;
+  text-align: center;
+  color: var(--muted);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 12px;
+}
+
+.footer a {
+  color: var(--blue);
+}
+
+@media (min-width: 720px) {
+  .topbar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .picker {
+    align-items: flex-end;
+    max-width: 420px;
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "eu",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --clearScreen false",
+    "build": "bash scripts/copy-data.sh && tsc && vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && bash scripts/deploy.sh",
+    "lint": "eslint \"src/**/*.ts*\""
+  },
+  "dependencies": {
+    "@hemicycle/european-parliament-votes": "*",
+    "@hemicycle/react": "*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^3.1.0",
+    "typescript": "5.5.4",
+    "vite": "^5.1.4"
+  }
+}

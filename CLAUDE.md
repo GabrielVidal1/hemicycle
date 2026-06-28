@@ -30,6 +30,10 @@ apps/
   web/         demo site (Vite + React + Tailwind v4 + radix-ui) — deployed to hemicycle.dev
   fr/          fr.hemicycle.dev — French Assembly votes-by-law viewer (Vite + React) using
                <Hemicycle/> + @hemicycle/french-assemblee-nationale-votes
+  eu/          eu.hemicycle.dev — European Parliament votes-by-file viewer (Vite + React) using
+               <Hemicycle/> + @hemicycle/european-parliament-votes. NOTE: the EP dataset is large,
+               so the app fetches it as static JSON from public/data (copied by scripts/copy-data.sh
+               at build) instead of importing the package's JS chunks — bundling them OOMs Vite.
   docs/        Docusaurus documentation site
 configs/
   eslint-config/      @hemicycle/eslint-config
