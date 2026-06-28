@@ -58,6 +58,15 @@ data/
                                      NON-reasoning model (default gemma-4-26b-a4b-it) — qwen3.6 reasons and
                                      never emits JSON. Summaries (public/summaries) are committed; transcripts
                                      cache to .cache (gitignored). See its README.
+  european-parliament-debates/       @hemicycle/european-parliament-debates — EP plenary debate verbatim
+                                     reports (CRE) from the EP Open Data Portal XML, segmented per agenda
+                                     item + linked to the votes-package procedures, then summarized into
+                                     ENGLISH per-text explainers by the same LOCAL LLM. EU twin of the
+                                     -debats package above; same two-tier (bundled indexes + fetched
+                                     per-item) shape. `yarn fetch` is throttled + resumable (the portal
+                                     rate-limits ~100 req/15min and only publishes FINAL XML with a long
+                                     lag, so coverage trails ~1yr); `LMSTUDIO_API_KEY=… yarn summarize`.
+                                     See its README.
 ```
 
 The published dependency chain is **core → vanilla → react**: each wraps the one below, so a consumer
