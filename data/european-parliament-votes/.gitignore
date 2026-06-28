@@ -1,0 +1,8 @@
+dist
+.turbo
+node_modules
+*.zip
+*.csv
+*.csv.gz
+tsconfig.tsbuildinfo
+*.tsbuildinfo

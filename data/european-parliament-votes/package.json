@@ -1,0 +1,27 @@
+{
+  "name": "@hemicycle/european-parliament-votes",
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.mts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "fetch": "NODE_OPTIONS=--max-old-space-size=6144 tsx scripts/fetch-data.ts",
+    "dev": "NODE_ENV=development tsdown --watch",
+    "build": "tsdown"
+  },
+  "devDependencies": {
+    "fflate": "^0.8.2",
+    "tsx": "^4.21.0",
+    "typescript": "5.5.4"
+  }
+}
