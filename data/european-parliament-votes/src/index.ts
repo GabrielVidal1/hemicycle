@@ -1,8 +1,8 @@
 /**
  * @hemicycle/european-parliament-votes
  *
- * Roll-call vote data of the European Parliament for parliamentary terms 9–10
- * (July 2019 → today), normalized for displaying how every MEP and political
+ * Roll-call vote data of the European Parliament for parliamentary terms 8–10
+ * (July 2014 → today), normalized for displaying how every MEP and political
  * group voted on a given text — ready to colour a Hemicycle seat chart.
  *
  * The bundle ships only types + small helpers. The (large) datasets are loaded
@@ -64,7 +64,7 @@ export interface VoteIndexEntry {
   id: number;
   /** ISO datetime of the vote, e.g. "2024-04-24 12:51:08". */
   timestamp: string;
-  /** EP parliamentary term (9 or 10). */
+  /** EP parliamentary term (8, 9 or 10). */
   term: number;
   title: string | null;
   /** EP document reference of the voted text, e.g. "RC-B9-0006/2019". */
@@ -110,6 +110,8 @@ export interface Mep {
 export interface Meta {
   source: string;
   sourceSite: string;
+  /** source for the term-8 (2014–2019) data (the EP Open Data Portal). */
+  sourceTerm8?: string;
   license: string;
   generatedFrom: Record<string, string>;
   coverage: {
@@ -128,16 +130,24 @@ export interface Meta {
     meps: number;
     countries: number;
   };
+  /** term-8-specific provenance counts (added from the EP Open Data Portal). */
+  term8?: {
+    sittingsWithVotes: number;
+    votes: number;
+    mainVotes: number;
+    nominalCells: number;
+    unresolvedCells: number;
+  };
   note: string;
 }
 
 /** Parliamentary terms covered by this dataset. */
-export const TERMS = [9, 10] as const;
+export const TERMS = [8, 9, 10] as const;
 export type Term = (typeof TERMS)[number];
 
 /** Years for which a per-MEP detail file ships. */
 export const DETAIL_YEARS = [
-  2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026,
+  2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026,
 ] as const;
 export type DetailYear = (typeof DETAIL_YEARS)[number];
 
@@ -163,6 +173,16 @@ export function loadVotesIndex(): Promise<VoteIndexEntry[]> {
 /** Load the full per-MEP nominal detail (main votes) for one calendar year. */
 export function loadYearDetail(year: DetailYear): Promise<VoteDetail[]> {
   switch (year) {
+    case 2014:
+      return importJson(import("../data/votes-detail/2014.json"));
+    case 2015:
+      return importJson(import("../data/votes-detail/2015.json"));
+    case 2016:
+      return importJson(import("../data/votes-detail/2016.json"));
+    case 2017:
+      return importJson(import("../data/votes-detail/2017.json"));
+    case 2018:
+      return importJson(import("../data/votes-detail/2018.json"));
     case 2019:
       return importJson(import("../data/votes-detail/2019.json"));
     case 2020:
@@ -190,7 +210,11 @@ export function loadYearDetail(year: DetailYear): Promise<VoteDetail[]> {
  */
 export async function loadTermDetail(term: Term): Promise<VoteDetail[]> {
   const years: DetailYear[] =
-    term === 9 ? [2019, 2020, 2021, 2022, 2023, 2024] : [2024, 2025, 2026];
+    term === 8
+      ? [2014, 2015, 2016, 2017, 2018, 2019]
+      : term === 9
+        ? [2019, 2020, 2021, 2022, 2023, 2024]
+        : [2024, 2025, 2026];
   const parts = await Promise.all(years.map((y) => loadYearDetail(y)));
   return parts.flat().filter((v) => v.term === term);
 }

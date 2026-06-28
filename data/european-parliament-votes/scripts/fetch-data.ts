@@ -14,9 +14,11 @@
  *     - countries.csv           country code -> label
  *
  * Coverage: HowTheyVote starts at the 9th parliamentary term (2 July 2019), so
- * this dataset spans terms 9 and 10 (2019 -> today, ~7 years). Term 8
- * (2014-2019) is NOT covered by this source — see meta.json / README. The EP
- * Open Data Portal (data.europarl.europa.eu) would be the path to extend back.
+ * it covers terms 9 and 10 (2019 -> today). Term 8 (2014-2019) is NOT in
+ * HowTheyVote, so it is fetched from a SECOND source — the EP Open Data Portal's
+ * per-sitting "Results of roll-call votes" XML — and merged into the same
+ * normalized dataset (see scripts/fetch-term8.ts). The combined dataset spans
+ * terms 8, 9 and 10.
  *
  * Outputs (all under ../data, committed to git):
  *   - votes-index.json           lightweight record for EVERY roll-call vote (browse/search)
@@ -40,6 +42,7 @@ import { gunzipSync, strFromU8 } from "fflate";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { fetchTerm8, type Term8Result } from "./fetch-term8.ts";
 
 // member_votes.csv decompresses to several hundred MB; the `fetch` npm script
 // runs this with `--max-old-space-size=6144` (via NODE_OPTIONS) to fit it.
@@ -74,6 +77,10 @@ const GROUP_COLORS: Record<string, string> = {
   GUE_NGL: "#B71C1C", // The Left (GUE/NGL) — dark red
   GUE_NGL_1995_0: "#B71C1C", // legacy GUE/NGL label
   NI: "#999999", // Non-attached members — grey
+  // Term-8-only groups (2014–2019), added by the EP Open Data Portal source.
+  ALDE: "#FFD700", // Alliance of Liberals and Democrats for Europe — gold
+  EFDD: "#24B9B9", // Europe of Freedom and Direct Democracy — teal
+  ENF: "#2B3856", // Europe of Nations and Freedom — dark navy
 };
 
 const POSITIONS = {
@@ -332,6 +339,45 @@ async function main() {
     return null;
   }
 
+  // --- Term 8 (2014-2019), from the EP Open Data Portal ---------------------
+  // HowTheyVote does not cover term 8; fetch + normalize it from a second source
+  // and merge into the SAME references and per-year detail files (see
+  // scripts/fetch-term8.ts). Done before writing the reference files so the new
+  // term-8 MEPs/groups are folded into them. Pass the country we already know
+  // for cross-term MEPs (from HowTheyVote) so term-8 skips those detail lookups.
+  const knownCountry = new Map<string, string | null>();
+  for (const [id, m] of Object.entries(meps))
+    if (m.country) knownCountry.set(id, m.country);
+  const term8: Term8Result = await fetchTerm8(knownCountry);
+
+  // merge term-8 groups (term-8-only ALDE/EFDD/ENF; the rest reuse existing codes)
+  for (const [code, g] of Object.entries(term8.groups)) {
+    if (!groups[code]) {
+      groups[code] = {
+        label: g.label,
+        abbrev: g.abbrev,
+        color: GROUP_COLORS[code] ?? null,
+      };
+    }
+  }
+  // merge term-8 MEPs into the shared id space (don't overwrite richer term-9
+  // records; only add new ids and backfill missing fields).
+  let newMeps = 0;
+  for (const [id, m] of Object.entries(term8.meps)) {
+    const ex = meps[id];
+    if (!ex) {
+      meps[id] = m;
+      newMeps++;
+    } else {
+      if (ex.firstName == null && m.firstName) ex.firstName = m.firstName;
+      if (ex.lastName == null && m.lastName) ex.lastName = m.lastName;
+      if (ex.country == null && m.country) ex.country = m.country;
+    }
+  }
+  console.log(
+    `  term-8 added ${newMeps} new MEPs (merged into the shared id space)`,
+  );
+
   await writeJson("reference/groups.json", groups);
   await writeJson("reference/meps.json", meps);
   await writeJson("reference/countries.json", countries);
@@ -452,6 +498,51 @@ async function main() {
     detailByYear.set(year, list);
   }
 
+  // --- Merge term-8 votes into the index + per-year detail ------------------
+  // Term-8 ids are a disjoint id space from term 9/10, but dedup defensively so
+  // a year file is never produced from only one source. Term-8 votes from early
+  // 2019 sittings land in votes-detail/2019.json alongside the term-9 2019 ones.
+  const seenIds = new Set(index.map((e) => e.id));
+  let term8Indexed = 0;
+  let term8Detailed = 0;
+  for (const v of term8.votes) {
+    if (seenIds.has(v.id)) continue;
+    seenIds.add(v.id);
+    const indexEntry: VoteIndexEntry = {
+      id: v.id,
+      timestamp: v.timestamp,
+      term: v.term,
+      title: v.title,
+      reference: v.reference,
+      amendmentSubject: v.amendmentSubject,
+      isMain: v.isMain,
+      procedureReference: v.procedureReference,
+      procedureTitle: v.procedureTitle,
+      procedureType: v.procedureType,
+      result: v.result,
+      totals: v.totals,
+      detail: v.isMain, // ship full nominal detail for main votes (same policy)
+    };
+    index.push(indexEntry);
+    term8Indexed++;
+    if (v.isMain) {
+      const { detail: _omit, ...rest } = indexEntry;
+      const record: VoteDetail = {
+        ...rest,
+        groups: v.groups,
+        votes: v.votes,
+      };
+      const year = v.timestamp.slice(0, 4) || "unknown";
+      const list = detailByYear.get(year) ?? [];
+      list.push(record);
+      detailByYear.set(year, list);
+      term8Detailed++;
+    }
+  }
+  console.log(
+    `  merged ${term8Indexed} term-8 votes into the index (${term8Detailed} with per-MEP detail)`,
+  );
+
   const years = [...detailByYear.keys()].sort();
   for (const y of years) {
     const list = detailByYear.get(y)!;
@@ -478,17 +569,30 @@ async function main() {
     perYear.set(y, yy);
   }
 
+  const term8Cells = term8.votes.reduce((n, v) => n + v.votes.length, 0);
   const dates = index.map((e) => e.timestamp).filter(Boolean);
   const meta = {
     source: "https://github.com/HowTheyVote/data",
     sourceSite: "https://howtheyvote.eu",
-    license: "Creative Commons Attribution 4.0 (CC BY 4.0), © HowTheyVote.eu",
-    generatedFrom: ASSETS,
+    sourceTerm8: "https://data.europarl.europa.eu (EP Open Data Portal)",
+    license:
+      "Terms 9-10: CC BY 4.0, © HowTheyVote.eu. Term 8: European Parliament Open Data Portal (Results of roll-call votes, PV-8-*-RCV), © European Union.",
+    generatedFrom: {
+      ...ASSETS,
+      term8RollCallVotes:
+        "https://data.europarl.europa.eu/api/v2/documents/PV-8-{date}-RCV -> distribution …-RCV-FNL_fr.xml",
+      term8Meps:
+        "https://data.europarl.europa.eu/api/v2/meps?parliamentary-term=8",
+    },
     coverage: {
       from: dates.length ? dates[dates.length - 1] : null,
       to: dates.length ? dates[0] : null,
       terms: [...perTerm.keys()].sort((a, b) => a - b),
-      note: "HowTheyVote covers EP roll-call votes from the 9th parliamentary term (2 July 2019) onward. The 8th term (2014-2019) is NOT included by this source.",
+      note:
+        "Terms 9-10 (2 July 2019 onward) come from HowTheyVote.eu. Term 8 " +
+        `(${term8.stats.from ?? "?"} … ${term8.stats.to ?? "?"}) is sourced ` +
+        "directly from the European Parliament Open Data Portal's per-sitting " +
+        "'Results of roll-call votes' XML (PV-8-*-RCV), which HowTheyVote does not cover.",
     },
     terms: [...perTerm.entries()]
       .sort((a, b) => a[0] - b[0])
@@ -499,16 +603,23 @@ async function main() {
     totals: {
       votes: index.length,
       withDetail: index.filter((e) => e.detail).length,
-      nominalCells: cells,
+      nominalCells: cells + term8Cells,
       groups: Object.keys(groups).length,
       meps: Object.keys(meps).length,
       countries: Object.keys(countries).length,
     },
+    term8: {
+      sittingsWithVotes: term8.stats.sittingsWithRcv,
+      votes: term8.stats.votes,
+      mainVotes: term8.stats.mainVotes,
+      nominalCells: term8Cells,
+      unresolvedCells: term8.stats.unresolvedCells,
+    },
     note:
       "votes-index.json lists every roll-call vote with its for/against/abstention totals; " +
       "full per-MEP nominal detail (votes-detail/<year>.json) is shipped for the substantive " +
-      "'main' votes (is_main in the source) to keep the committed dataset to a sane size. " +
-      "Re-generate with `yarn fetch`.",
+      "'main' votes (is_main in the source; for term 8 derived from the sub-vote subject) to " +
+      "keep the committed dataset to a sane size. Re-generate with `yarn fetch`.",
   };
   await writeJson("meta.json", meta);
 
