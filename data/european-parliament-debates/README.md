@@ -81,6 +81,25 @@ Only sittings whose **final multilingual XML** is published are parsed — the
 provisional verbatim ships as PDF/DOCX only and lags the final XML, so the most
 recent sittings are absent until their XML appears.
 
+## Cache & provenance conventions (datakit)
+
+This package follows the **datakit** conventions (the homelab data-pipeline
+template, `~/projects/templates/datakit`):
+
+- **Probe cache** — `.cache/probe.json` records per-sitting `"ok" | "none"`
+  so known-absent sittings are never re-requested; combined with the
+  throttled fetch this is what makes a crawl through the rate-limited portal
+  resumable — re-running continues exactly where the last window left off.
+- **Raw cache** — `.cache/xml/<id>.xml` keeps every fetched verbatim XML so
+  re-parsing is free; `.cache/sittings/` holds the parsed working set.
+  Both are gitignored (resumability, not truth) — delete to force a re-fetch.
+- **Two-tier publish** — small bundled indexes + big on-demand payloads
+  under `public/`, all derived and regenerable.
+- **Generated-field provenance** — every LLM summary records the `model` and
+  `generatedAt` it was produced with (datakit's `_gen` convention, flattened
+  here for the existing consumers); facts are computed in code, never asked
+  of the model.
+
 ## Licence
 
 Code: MIT. Data: © European Union — European Parliament, verbatim reports of

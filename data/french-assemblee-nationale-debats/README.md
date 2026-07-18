@@ -55,6 +55,24 @@ LMSTUDIO_API_KEY=… yarn summarize --top 10         # the N most recent laws wi
 `public/seances`. The LLM output under `public/summaries` is committed (it is the
 expensive artifact — the box is not on the deploy machine).
 
+## Cache & provenance conventions (datakit)
+
+This package follows the **datakit** conventions (the homelab data-pipeline
+template, `~/projects/templates/datakit` — whose two-tier publish pattern was
+itself distilled from hemicycle):
+
+- **Raw cache** — `.cache/seances/<leg>/<uid>.json` is the gitignored working
+  set (resumability, not truth): re-runs re-parse from it for free; delete it
+  to force a re-fetch. The source here is one bulk zip per legislature, so no
+  probe cache is needed (contrast the EP package, which probes per-sitting).
+- **Two-tier publish** — small bundled indexes (`data/*.json`) + big
+  on-demand payloads (`public/summaries/`, `public/seances/`), all derived
+  and regenerable.
+- **Generated-field provenance** — every LLM summary records the `model` and
+  `generatedAt` it was produced with (datakit's `_gen` convention, flattened
+  here for the existing consumers); facts (counts, links, sources) are
+  computed in code, never asked of the model.
+
 ## How linking works
 
 The debate XML doesn't carry a dossier id on each intervention. Each bill's
