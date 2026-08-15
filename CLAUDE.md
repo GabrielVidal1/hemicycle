@@ -130,6 +130,10 @@ cd apps/fr && npm run deploy   # builds, rsyncs dist/ → raspy2 fr. folder, res
 
 Caddy auto-issues the Let's Encrypt cert on the first HTTPS request. See `apps/fr/scripts/deploy.sh`.
 
+## Where this is going
+
+Where this is going is defined in [GOAL.md](GOAL.md) — read it before proposing features.
+
 ## Committing
 
 This project lives on the self-hosted Gitea. Use the `commit-project` skill to commit and push.
