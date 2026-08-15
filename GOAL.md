@@ -38,8 +38,6 @@ funds their existence as an open-source portfolio piece.
      removes its own line in the same commit that ticks the checkbox. Leave
      the section empty (this comment only) when nothing is in flight. -->
 
-- [eu] Add explainer (Comprendre) tab to apps/eu — @2026-08-15T16:00Z
-
 ## Horizons
 
 ### Short term — v0.2 (now)
@@ -69,9 +67,25 @@ metrics.
 
 ## Wishlist
 
-- [ ] Add an explainer ("Comprendre") tab to `apps/eu`, consuming the
+- [x] Add an explainer ("Comprendre") tab to `apps/eu`, consuming the
   already-committed `@hemicycle/european-parliament-debates` summaries —
-  same pattern as `apps/fr`'s Comprendre/Le vote/Les débats tabs.
+  same pattern as `apps/fr`'s Comprendre/Le vote/Les débats tabs. Shipped
+  2026-08-15: ported the FR pattern into `apps/eu/src/App.tsx` (new
+  `ExplainerApp`, `ComprendreTab`, `DebatsTab`, `ArgColumn`, `SeanceArg`) and
+  a new `apps/eu/src/Transcript.tsx` transcript drawer (renamed
+  `leg`/`seanceUid` → `term`/`sittingUid` for the EU package's field names).
+  `apps/eu/vite.config.ts` gained the same `debatsData()` dev-middleware +
+  build-copy plugin as `apps/fr`, serving the debates package's `public/` at
+  `/eu-debats`. Only 6 of ~2000 files have a summary so far, so the new
+  picker/tabs are gated behind `?comprendre=1` — the plain URL keeps
+  today's votes-only viewer byte-for-byte unchanged (verified with a
+  screenshot: same file, same seat chart, no visual diff). Verified live at
+  `https://eu.hemicycle.dev/?comprendre=1` — Comprendre (summary + sourced
+  arguments + timeline), Le vote (cross-referenced by procedure reference to
+  the votes dataset) and Les débats (per-sitting summaries + the transcript
+  drawer scrolling to and highlighting a cited intervention) all render and
+  cite correctly, including a French-language intervention rendered
+  correctly in the (English-language) explainer's transcript view.
 - [ ] Run `LMSTUDIO_API_KEY=… yarn summarize --top 20` in
   `data/french-assemblee-nationale-debats` (wake EVOX2 via the `evox2`
   skill first) to grow FR coverage from 5 to ~20+ laws.
