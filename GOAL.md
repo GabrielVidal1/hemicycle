@@ -38,6 +38,8 @@ funds their existence as an open-source portfolio piece.
      removes its own line in the same commit that ticks the checkbox. Leave
      the section empty (this comment only) when nothing is in flight. -->
 
+- [eu] Add explainer (Comprendre) tab to apps/eu — @2026-08-15T16:00Z
+
 ## Horizons
 
 ### Short term — v0.2 (now)
