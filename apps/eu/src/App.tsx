@@ -7,6 +7,12 @@ import type {
   VoteDetail,
   VoteIndexEntry,
 } from "@hemicycle/european-parliament-votes";
+import {
+  loadSummariesIndex,
+  loadProcedureSummary,
+  type SummaryIndexEntry,
+  type ProcedureSummary,
+} from "@hemicycle/european-parliament-debates";
 import { loadGroups, loadVotesIndex, loadYearDetail } from "./data";
 import {
   buildSeats,
@@ -21,8 +27,21 @@ import {
   tallies,
   yearOf,
 } from "./lib";
+import { TranscriptDrawer } from "./Transcript";
 
+// The "Comprendre" explainer tabs are new and only cover a handful of files
+// so far (@hemicycle/european-parliament-debates ships 6 summaries against
+// thousands of votes) — gate them behind a query param until there's enough
+// coverage to be the default experience. ?comprendre=1 switches the picker to
+// the explained-files list and adds the Comprendre/Le vote/Les débats tabs,
+// mirroring apps/fr; the plain URL keeps today's votes-only viewer untouched.
 export function App() {
+  const explainOn =
+    new URLSearchParams(window.location.search).get("comprendre") === "1";
+  return explainOn ? <ExplainerApp /> : <VotesOnlyApp />;
+}
+
+function VotesOnlyApp() {
   const [index, setIndex] = useState<VoteIndexEntry[] | null>(null);
   const [groups, setGroups] = useState<Record<string, Group> | null>(null);
   const [selectedRef, setSelectedRef] = useState<string | null>(null);
@@ -142,8 +161,459 @@ export function App() {
       <footer className="footer">
         Data: <a href="https://howtheyvote.eu">HowTheyVote.eu</a> (CC BY 4.0).
         Hemicycle by <a href="https://hemicycle.dev">@hemicycle/react</a>.
+        <p className="mode-link">
+          <a href="?comprendre=1">Explainers preview →</a>
+        </p>
       </footer>
     </div>
+  );
+}
+
+// ── Explainer preview (Comprendre / Le vote / Les débats) ──────────────────
+// Mirrors apps/fr's App.tsx pattern: the picker is driven by the explained
+// files (@hemicycle/european-parliament-debates), each cross-referenced
+// against the votes index for the "Le vote" tab.
+
+type Tab = "comprendre" | "vote" | "debats";
+
+function ExplainerApp() {
+  const [summaries, setSummaries] = useState<SummaryIndexEntry[] | null>(
+    null,
+  );
+  const [index, setIndex] = useState<VoteIndexEntry[] | null>(null);
+  const [groups, setGroups] = useState<Record<string, Group> | null>(null);
+  const [selectedRef, setSelectedRef] = useState<string | null>(null);
+  const [tab, setTab] = useState<Tab>("comprendre");
+
+  const [summary, setSummary] = useState<ProcedureSummary | null>(null);
+  const [loadingSummary, setLoadingSummary] = useState(false);
+  const summaryCache = useRef(new Map<string, ProcedureSummary>());
+
+  const [vote, setVote] = useState<VoteDetail | null>(null);
+  const [loadingVote, setLoadingVote] = useState(false);
+  const detailCache = useRef(new Map<number, VoteDetail[]>());
+
+  useEffect(() => {
+    Promise.all([loadSummariesIndex(), loadVotesIndex(), loadGroups()]).then(
+      ([sum, idx, grp]) => {
+        setSummaries(sum);
+        setIndex(idx);
+        setGroups(grp);
+      },
+    );
+  }, []);
+
+  useEffect(() => {
+    if (!selectedRef && summaries && summaries.length)
+      setSelectedRef(summaries[0].ref);
+  }, [summaries, selectedRef]);
+
+  // Votes procedure for the selected file (for the hemicycle).
+  const procedure = useMemo<Procedure | null>(() => {
+    if (!index || !selectedRef) return null;
+    return listProcedures(index).find((p) => p.reference === selectedRef) ?? null;
+  }, [index, selectedRef]);
+
+  const displayEntry = useMemo(
+    () => (procedure ? pickDisplayVote(procedure) : null),
+    [procedure],
+  );
+
+  // Load the LLM explainer for the selected file.
+  useEffect(() => {
+    if (!selectedRef) return;
+    setTab("comprendre");
+    const cached = summaryCache.current.get(selectedRef);
+    if (cached) {
+      setSummary(cached);
+      return;
+    }
+    let cancelled = false;
+    setLoadingSummary(true);
+    setSummary(null);
+    loadProcedureSummary(selectedRef)
+      .then((s) => {
+        summaryCache.current.set(selectedRef, s);
+        if (!cancelled) setSummary(s);
+      })
+      .finally(() => !cancelled && setLoadingSummary(false));
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedRef]);
+
+  // Load the displayed vote's nominal detail (for the hemicycle).
+  useEffect(() => {
+    if (!displayEntry) {
+      setVote(null);
+      return;
+    }
+    let cancelled = false;
+    setLoadingVote(true);
+    const year = yearOf(displayEntry.timestamp);
+    const find = (list: VoteDetail[]) =>
+      list.find((v) => v.id === displayEntry.id) ?? null;
+    const cached = detailCache.current.get(year);
+    if (cached) {
+      setVote(find(cached));
+      setLoadingVote(false);
+      return;
+    }
+    loadYearDetail(year as DetailYear).then((list) => {
+      detailCache.current.set(year, list);
+      if (!cancelled) {
+        setVote(find(list));
+        setLoadingVote(false);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [displayEntry]);
+
+  const ready = summaries && index && groups;
+
+  return (
+    <div className="app">
+      <header className="topbar">
+        <div className="brand">
+          <span className="brand-mark" aria-hidden>
+            ★
+          </span>
+          <div>
+            <h1>Understand European Parliament files</h1>
+            <p className="tagline">
+              What each file does, what was said in the chamber, and how MEPs
+              voted — summarized from the official verbatim reports.
+            </p>
+          </div>
+        </div>
+
+        <div className="picker">
+          <label htmlFor="file" className="picker-label">
+            Choose a file
+          </label>
+          <select
+            id="file"
+            value={selectedRef ?? ""}
+            onChange={(e) => setSelectedRef(e.target.value)}
+            disabled={!ready}
+          >
+            {!ready && <option>Loading…</option>}
+            {(summaries ?? []).map((s) => (
+              <option key={s.ref} value={s.ref}>
+                {euDate(s.lastDate)} · {s.titre ?? s.ref}
+              </option>
+            ))}
+          </select>
+          {ready && (
+            <span className="picker-count">
+              {summaries!.length} file{summaries!.length > 1 ? "s" : ""}{" "}
+              explained · from the plenary verbatim
+            </span>
+          )}
+        </div>
+      </header>
+
+      <main>
+        {!ready && <div className="status">Loading…</div>}
+        {ready && selectedRef && (
+          <>
+            <nav className="tabs" role="tablist">
+              {(
+                [
+                  ["comprendre", "Comprendre"],
+                  ["vote", "Le vote"],
+                  ["debats", "Les débats"],
+                ] as [Tab, string][]
+              ).map(([t, label]) => (
+                <button
+                  key={t}
+                  role="tab"
+                  aria-selected={tab === t}
+                  className={`tab ${tab === t ? "is-active" : ""}`}
+                  onClick={() => setTab(t)}
+                >
+                  {label}
+                  {t === "debats" && summary ? (
+                    <span className="tab-badge">{summary.blocks.length}</span>
+                  ) : null}
+                </button>
+              ))}
+            </nav>
+
+            {tab === "comprendre" && (
+              <ComprendreTab summary={summary} loading={loadingSummary} />
+            )}
+            {tab === "vote" &&
+              (procedure ? (
+                <VoteView
+                  procedure={procedure}
+                  vote={vote}
+                  groups={groups!}
+                  loading={loadingVote}
+                />
+              ) : (
+                <section className="vote">
+                  <div className="status">
+                    No roll-call vote available for this file.
+                  </div>
+                </section>
+              ))}
+            {tab === "debats" && (
+              <DebatsTab summary={summary} loading={loadingSummary} />
+            )}
+          </>
+        )}
+      </main>
+
+      <footer className="footer">
+        Data: <a href="https://data.europarl.europa.eu">EP Open Data Portal</a>{" "}
+        · <a href="https://howtheyvote.eu">HowTheyVote.eu</a> (CC BY 4.0).
+        Summaries generated by a local language model — cross-check against
+        the cited official verbatim. Hemicycle by{" "}
+        <a href="https://hemicycle.dev">@hemicycle/react</a>.
+        <p className="mode-link">
+          <a href="?">← All files (votes only)</a>
+        </p>
+      </footer>
+    </div>
+  );
+}
+
+function ComprendreTab({
+  summary,
+  loading,
+}: {
+  summary: ProcedureSummary | null;
+  loading: boolean;
+}) {
+  if (loading || !summary)
+    return <div className="status">Loading the explainer…</div>;
+  return (
+    <section className="explainer">
+      <div className="explainer-head">
+        <h2>{summary.titre ?? summary.ref}</h2>
+        <p className="issue">{summary.issue}</p>
+      </div>
+
+      <p className="lede">{summary.resumeSimple}</p>
+      {summary.enJeu && (
+        <div className="enjeu">
+          <span className="enjeu-label">What's at stake</span>
+          <p>{summary.enJeu}</p>
+        </div>
+      )}
+
+      <div className="args">
+        <ArgColumn
+          kind="pour"
+          title="Arguments for"
+          args={summary.argumentsPour}
+          sources={summary.sources}
+        />
+        <ArgColumn
+          kind="contre"
+          title="Arguments against"
+          args={summary.argumentsContre}
+          sources={summary.sources}
+        />
+      </div>
+
+      {summary.chronologie.length > 0 && (
+        <div className="panel">
+          <h3>Timeline of the debate</h3>
+          <ol className="timeline">
+            {summary.chronologie.map((c, i) => (
+              <li key={i}>
+                <span className="t-date">{euDate(c.date)}</span>
+                <div>
+                  <strong>{c.titre}</strong>
+                  <p>{c.fait}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+
+      {summary.orateursCles.length > 0 && (
+        <div className="panel">
+          <h3>Voices of the debate</h3>
+          <ul className="speakers">
+            {summary.orateursCles.map((o, i) => (
+              <li key={i}>
+                <strong>{o.nom}</strong>
+                <span>{o.role}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {summary.sources.length > 0 && (
+        <div className="panel sources">
+          <h3>Sources ({summary.sources.length})</h3>
+          <ul>
+            {summary.sources.map((s, i) => (
+              <li key={i}>
+                <a href={s.url} target="_blank" rel="noreferrer">
+                  {s.orateur || "Intervention"} · sitting of {euDate(s.date)}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function ArgColumn({
+  kind,
+  title,
+  args,
+  sources,
+}: {
+  kind: "pour" | "contre";
+  title: string;
+  args: ProcedureSummary["argumentsPour"];
+  sources: ProcedureSummary["sources"];
+}) {
+  return (
+    <div className={`arg-col is-${kind}`}>
+      <h3>
+        <span className="arg-dot" /> {title}
+      </h3>
+      {args.length === 0 && <p className="muted">—</p>}
+      <ul>
+        {args.map((a, i) => {
+          const src = a.source != null ? sources[a.source] : null;
+          return (
+            <li key={i}>
+              <p>{a.point}</p>
+              <span className="arg-by">
+                {a.orateur}
+                {src && (
+                  <>
+                    {" · "}
+                    <a href={src.url} target="_blank" rel="noreferrer">
+                      source
+                    </a>
+                  </>
+                )}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+function DebatsTab({
+  summary,
+  loading,
+}: {
+  summary: ProcedureSummary | null;
+  loading: boolean;
+}) {
+  const [open, setOpen] = useState<{
+    term: number;
+    uid: string;
+    ordre?: number;
+  } | null>(null);
+  if (loading || !summary)
+    return <div className="status">Loading the debates…</div>;
+  return (
+    <section className="debats">
+      <p className="debats-intro">
+        {summary.blocks.length} sitting{summary.blocks.length > 1 ? "s" : ""}{" "}
+        of debate on this file. Each summary points back to the interventions
+        of the official verbatim report.
+      </p>
+      {summary.blocks.map((b) => (
+        <article className="seance-card" key={b.blockId}>
+          <header>
+            <h3>{euDate(b.date)}</h3>
+            <button
+              className="btn-link"
+              onClick={() => setOpen({ term: summary.term, uid: b.sittingUid })}
+            >
+              Read the verbatim report →
+            </button>
+          </header>
+          <p className="seance-resume">{b.resume}</p>
+          <div className="args args-compact">
+            <div className="arg-col is-pour">
+              <h4>
+                <span className="arg-dot" /> For
+              </h4>
+              <ul>
+                {b.argumentsPour.map((a, i) => (
+                  <SeanceArg key={i} a={a} b={b} onOpen={setOpen} />
+                ))}
+                {b.argumentsPour.length === 0 && <li className="muted">—</li>}
+              </ul>
+            </div>
+            <div className="arg-col is-contre">
+              <h4>
+                <span className="arg-dot" /> Against
+              </h4>
+              <ul>
+                {b.argumentsContre.map((a, i) => (
+                  <SeanceArg key={i} a={a} b={b} onOpen={setOpen} />
+                ))}
+                {b.argumentsContre.length === 0 && (
+                  <li className="muted">—</li>
+                )}
+              </ul>
+            </div>
+          </div>
+        </article>
+      ))}
+      {open && (
+        <TranscriptDrawer
+          term={open.term}
+          uid={open.uid}
+          focusOrdre={open.ordre}
+          onClose={() => setOpen(null)}
+        />
+      )}
+    </section>
+  );
+}
+
+function SeanceArg({
+  a,
+  b,
+  onOpen,
+}: {
+  a: ProcedureSummary["blocks"][number]["argumentsPour"][number];
+  b: ProcedureSummary["blocks"][number];
+  onOpen: (o: { term: number; uid: string; ordre?: number }) => void;
+}) {
+  const src = a.source != null ? b.sources[a.source] : null;
+  return (
+    <li>
+      <p>{a.point}</p>
+      <span className="arg-by">
+        {a.orateur}
+        {src && (
+          <>
+            {" · "}
+            <button
+              className="btn-cite"
+              onClick={() =>
+                onOpen({ term: src.term, uid: src.sittingUid, ordre: src.ordre })
+              }
+            >
+              view intervention
+            </button>
+          </>
+        )}
+      </span>
+    </li>
   );
 }
 
